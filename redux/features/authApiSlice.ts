@@ -37,6 +37,12 @@ const authApiSlice = apiSlice.injectEndpoints({
     //     },
     //   }),
     // }),
+    verifyToken: builder.mutation({
+      query: () => ({
+        url: "/auth/token/verify/",
+        method: "POST",
+      }),
+    }),
     login: builder.mutation({
       query: ({ email, password }) => ({
         url: "/auth/login/",
@@ -64,13 +70,6 @@ const authApiSlice = apiSlice.injectEndpoints({
         method: "POST",
       }),
     }),
-    // activation: builder.mutation({
-    //   query: ({ uid, token }) => ({
-    //     url: "/auth/users/activation/",
-    //     method: "POST",
-    //     body: { uid, token },
-    //   }),
-    // }),
     passwordChange: builder.mutation({
       query: ({ old_password, new_password1, new_password2 }) => ({
         url: "/auth/password/change/",
@@ -79,7 +78,7 @@ const authApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     resetPassword: builder.mutation({
-      query: (email) => ({
+      query: ({ email }) => ({
         url: "/auth/password/reset/",
         method: "POST",
         body: { email },
@@ -102,7 +101,7 @@ export const {
   useRegisterMutation,
   useVerifyMutation,
   useLogoutMutation,
-  // useActivationMutation,
+  useVerifyTokenMutation,
   useResetPasswordMutation,
   useResetPasswordConfirmMutation,
 } = authApiSlice;

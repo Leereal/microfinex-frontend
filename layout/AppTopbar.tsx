@@ -12,6 +12,10 @@ import { AppTopbarRef } from "@/types";
 import { LayoutContext } from "./context/layoutcontext";
 import { TieredMenu } from "primereact/tieredmenu";
 import { MenuItem } from "primereact/menuitem";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useLogoutMutation } from "@/redux/features/authApiSlice";
+import { logout as setLogout } from "@/redux/features/authSlice";
+import { useRouter } from "next/navigation";
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
   const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar } =
@@ -19,6 +23,10 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
   const menubuttonRef = useRef(null);
   const topbarmenuRef = useRef(null);
   const topbarmenubuttonRef = useRef(null);
+  const dispatch = useAppDispatch();
+  const [logout] = useLogoutMutation();
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const router = useRouter();
 
   useImperativeHandle(ref, () => ({
     menubutton: menubuttonRef.current,
@@ -31,21 +39,39 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     {
       label: "Profile",
       icon: "pi pi-search",
+      command: () => handleMenuItemClick("Profile"),
     },
     {
       label: "Settings",
       icon: "pi pi-cog",
+      command: () => handleMenuItemClick("Settings"),
     },
     {
       label: "Support",
       icon: "pi pi-question",
+      command: () => handleMenuItemClick("Support"),
     },
     {
       label: "Logout",
       icon: "pi pi-power-off",
+      command: () => handleMenuItemClick("Logout"),
     },
   ];
 
+  const handleMenuItemClick = (menuItemLabel: string) => {
+    handleLogout();
+  };
+  const handleLogout = async () => {
+    logout(undefined)
+      .unwrap()
+      .then(() => {
+        dispatch(setLogout());
+      })
+      .catch((error: any) => {})
+      .finally(() => {
+        router.push("/auth/login");
+      });
+  };
   return (
     <div className="layout-topbar">
       <Link href="/" className="layout-topbar-logo flex">
