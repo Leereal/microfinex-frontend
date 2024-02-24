@@ -9,27 +9,31 @@ import React, {
 } from "react";
 import { Button } from "primereact/button";
 import { Password } from "primereact/password";
-import { LayoutContext } from "../../../../layout/context/layoutcontext";
-import { InputText } from "primereact/inputtext";
 import { classNames } from "primereact/utils";
 import { Toast } from "primereact/toast";
-import { useLoginMutation } from "@/redux/features/authApiSlice";
+import { useResetPasswordConfirmMutation } from "@/redux/features/authApiSlice";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { z } from "zod";
-import { setAuth } from "@/redux/features/authSlice";
 import { useAppDispatch } from "@/redux/hooks";
-import Link from "next/link";
+import { LayoutContext } from "@/layout/context/layoutcontext";
 
-const LoginPage = () => {
+interface PasswordResetConfirmProps {
+  params: {
+    uid: string;
+    token: string;
+  };
+}
+const PasswordResetConfirm = ({ params }: PasswordResetConfirmProps) => {
   const toast = useRef<Toast | null>(null);
   const router = useRouter();
-  const [login, { isLoading, isError, isSuccess }] = useLoginMutation();
+  const [resetPasswordConfirm, { isLoading }] =
+    useResetPasswordConfirmMutation();
   const dispatch = useAppDispatch();
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    new_password1: "",
+    new_password2: "",
   });
-  const { email, password } = formData;
+  const { new_password1, new_password2 } = formData;
 
   const { layoutConfig } = useContext(LayoutContext);
 
@@ -48,28 +52,29 @@ const LoginPage = () => {
     event.preventDefault();
 
     const schema = z.object({
-      email: z.string().email(),
-      password: z.string().min(6),
+      new_password1: z.string().min(8),
+      new_password2: z.string().min(8),
     });
+
+    const { uid, token } = params;
 
     try {
       schema.parse(formData);
-      login({
-        email,
-        password,
+      resetPasswordConfirm({
+        uid,
+        token,
+        new_password1,
+        new_password2,
       })
         .unwrap()
-        .then((data) => {
-          dispatch(setAuth(data.user));
+        .then(() => {
           showSuccess();
-          router.push("/dashboard");
+          router.push("/auth/login");
         })
         .catch((error: any) => {
           console.log("error", error);
           showError(
-            error?.data?.non_field_errors?.[0] ||
-              error?.data?.detail ||
-              "Login failed. Please check your credentials and try again."
+            error?.data?.non_field_errors?.[0] || "Password reset failed."
           );
         });
     } catch (error: any) {
@@ -85,7 +90,7 @@ const LoginPage = () => {
     if (toast.current) {
       toast.current.show({
         severity: "error",
-        summary: "Login Failed",
+        summary: "Password Reset Failed",
         detail: errorMessage || "Something went wrong. Please try again.",
         life: 3000,
       });
@@ -97,8 +102,8 @@ const LoginPage = () => {
     if (toast.current) {
       toast.current.show({
         severity: "success",
-        summary: "Login Successful",
-        detail: "Login successful. Let's goooo.",
+        summary: "Password Reset Successful",
+        detail: "Password was reset successfully. Please login.",
         life: 3000,
       });
     }
@@ -130,18 +135,20 @@ const LoginPage = () => {
             <form onSubmit={onSubmit}>
               <div>
                 <label
-                  htmlFor="email"
-                  className="block text-900 text-xl font-medium mb-1"
+                  htmlFor="new_password1"
+                  className="block text-900 font-medium text-xl mb-2"
                 >
-                  Email
+                  New Password
                 </label>
-                <InputText
-                  id="email"
-                  placeholder="Email address"
-                  className="w-full md:w-30rem mb-3"
+                <Password
+                  inputId="new_password1"
+                  placeholder="New Password"
+                  toggleMask
+                  className="w-full mb-3"
+                  inputClassName="w-full  md:w-30rem"
                   onChange={onChange}
-                  value={email}
-                />
+                  value={new_password1}
+                ></Password>
                 <label
                   htmlFor="password"
                   className="block text-900 font-medium text-xl mb-2"
@@ -149,24 +156,14 @@ const LoginPage = () => {
                   Password
                 </label>
                 <Password
-                  inputId="password"
-                  placeholder="Password"
+                  inputId="new_password2"
+                  placeholder="Confirm New Password"
                   toggleMask
                   className="w-full mb-3"
                   inputClassName="w-full  md:w-30rem"
                   onChange={onChange}
-                  value={password}
+                  value={new_password2}
                 ></Password>
-
-                <div className="flex align-items-center justify-content-between mb-5 gap-5">
-                  <Link
-                    href="/password-reset"
-                    className="font-medium no-underline ml-2 text-right cursor-pointer"
-                    style={{ color: "var(--primary-color)" }}
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
                 <Button
                   className="w-full p-3 text-xl justify-center"
                   type="submit"
@@ -191,4 +188,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default PasswordResetConfirm;

@@ -1,21 +1,5 @@
+import { User } from "@/types/user";
 import { apiSlice } from "../services/apiSlice";
-
-interface User {
-  first_name: string;
-  last_name: string;
-  email: string;
-}
-
-interface SocialAuthArgs {
-  provider: string;
-  state: string;
-  code: string;
-}
-//TODO add the actual response we get when we register and if different don't use user
-interface CreateUserResponse {
-  success: boolean;
-  user: User;
-}
 
 //This will help not to have all endpoints configured in apiSlice
 //So we have authApiSlice that will have all the endpoints related to authentication
@@ -24,19 +8,6 @@ const authApiSlice = apiSlice.injectEndpoints({
     retrieveUser: builder.query<User, void>({
       query: () => "/auth/user/",
     }),
-    //Below code is only when we want to use social media authentication
-    // socialAuthenticate: builder.mutation<CreateUserResponse, SocialAuthArgs>({
-    //   query: ({ provider, state, code }) => ({
-    //     url: `/o/${provider}/?state=${encodeURIComponent(
-    //       state
-    //     )}&code=${encodeURIComponent(code)}`,
-    //     method: "POST",
-    //     headers: {
-    //       Accept: "application/json",
-    //       "Content-Type": "application/x-www-form-urlencoded",
-    //     },
-    //   }),
-    // }),
     verifyToken: builder.mutation({
       query: () => ({
         url: "/auth/token/verify/",
@@ -91,12 +62,18 @@ const authApiSlice = apiSlice.injectEndpoints({
         body: { uid, token, new_password1, new_password2 },
       }),
     }),
+    switchBranch: builder.mutation({
+      query: ({ branch }) => ({
+        url: "/auth/user/",
+        method: "PATCH",
+        body: { active_branch: branch },
+      }),
+    }),
   }),
 });
 
 export const {
   useRetrieveUserQuery,
-  //   useSocialAuthenticateMutation,
   useLoginMutation,
   useRegisterMutation,
   useVerifyMutation,
@@ -104,4 +81,5 @@ export const {
   useVerifyTokenMutation,
   useResetPasswordMutation,
   useResetPasswordConfirmMutation,
+  useSwitchBranchMutation,
 } = authApiSlice;

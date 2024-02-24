@@ -47,9 +47,9 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
       command: () => handleMenuItemClick("Settings"),
     },
     {
-      label: "Support",
+      label: "Switch Branch",
       icon: "pi pi-question",
-      command: () => handleMenuItemClick("Support"),
+      command: () => handleMenuItemClick("Switch-Branch"),
     },
     {
       label: "Logout",
@@ -59,7 +59,16 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
   ];
 
   const handleMenuItemClick = (menuItemLabel: string) => {
-    handleLogout();
+    switch (menuItemLabel) {
+      case "Logout":
+        handleLogout();
+        break;
+      case "Switch-Branch":
+        router.push("/switch-branch");
+        break;
+      default:
+        break;
+    }
   };
   const handleLogout = async () => {
     logout(undefined)

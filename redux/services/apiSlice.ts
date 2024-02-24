@@ -34,6 +34,7 @@ const baseQueryWithReauth: BaseQueryFn<
           extraOptions
         );
         if (refreshResult.data) {
+          console.log("refreshed token", refreshResult.data);
           //If login successful, set the auth state to true here
           api.dispatch(setAuth());
 

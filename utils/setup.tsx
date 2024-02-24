@@ -13,7 +13,7 @@ export default function Setup() {
     verifyToken(undefined)
       .unwrap()
       .then(() => {
-        dispatch(setAuth());
+        // dispatch(setAuth());
       })
       .finally(() => {
         dispatch(finishInitialLoad());
