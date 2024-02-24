@@ -19,6 +19,7 @@ import { z } from "zod";
 import { setAuth } from "@/redux/features/authSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 
 const LoginPage = () => {
   const toast = useRef<Toast | null>(null);
@@ -54,15 +55,15 @@ const LoginPage = () => {
 
     try {
       schema.parse(formData);
-      login({
+      signIn("credentials", {
         email,
         password,
       })
-        .unwrap()
         .then((data) => {
-          dispatch(setAuth(data.user));
+          console.log("data", data);
+          // dispatch(setAuth(data));
           showSuccess();
-          router.push("/dashboard");
+          // router.push("/dashboard");
         })
         .catch((error: any) => {
           console.log("error", error);
