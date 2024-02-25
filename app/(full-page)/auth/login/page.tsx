@@ -45,7 +45,7 @@ const LoginPage = () => {
     setFormData({ ...formData, [id]: value });
   };
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const schema = z.object({
@@ -55,24 +55,20 @@ const LoginPage = () => {
 
     try {
       schema.parse(formData);
-      signIn("credentials", {
+      const response = await signIn("credentials", {
         email,
         password,
-      })
-        .then((data) => {
-          console.log("data", data);
-          // dispatch(setAuth(data));
-          showSuccess();
-          // router.push("/dashboard");
-        })
-        .catch((error: any) => {
-          console.log("error", error);
-          showError(
-            error?.data?.non_field_errors?.[0] ||
-              error?.data?.detail ||
-              "Login failed. Please check your credentials and try again."
-          );
-        });
+        redirect: false,
+      });
+
+      if (response?.error) {
+        console.log("login error", response.error);
+        showError("Login failed. Please check your credentials and try again.");
+      } else {
+        // dispatch(setAuth(response));
+        showSuccess();
+        // router.push("/dashboard");
+      }
     } catch (error: any) {
       console.log("validation error", error);
       showError(
@@ -94,7 +90,6 @@ const LoginPage = () => {
   };
 
   const showSuccess = () => {
-    console.log("toast", toast.current);
     if (toast.current) {
       toast.current.show({
         severity: "success",

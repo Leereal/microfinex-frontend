@@ -98,7 +98,6 @@ const PasswordResetConfirm = ({ params }: PasswordResetConfirmProps) => {
   };
 
   const showSuccess = () => {
-    console.log("toast", toast.current);
     if (toast.current) {
       toast.current.show({
         severity: "success",

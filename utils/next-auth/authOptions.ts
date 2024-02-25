@@ -6,9 +6,9 @@ import axios from "axios";
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
-  session: {
-    strategy: "jwt",
-  },
+  // session: {
+  //   strategy: "jwt",
+  // },
   pages: {
     signIn: "/auth/login",
     error: "/auth/error",
@@ -43,14 +43,8 @@ export const authOptions: NextAuthOptions = {
                 httpOnly: httpOnly,
                 maxAge: parseInt(parsedCookie["Max-Age"]),
                 path: parsedCookie.path,
-                sameSite:
-                  parsedCookie.samesite === "lax"
-                    ? "lax"
-                    : parsedCookie.samesite === "strict"
-                    ? "strict"
-                    : "none",
                 expires: new Date(parsedCookie.expires),
-                secure: true,
+                secure: false,
               });
             });
           }
@@ -63,11 +57,12 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      return { ...token, ...user };
-    },
+    // async jwt({ token, user }) {
+    //   console.log("JWT CALLBACK", token);
+    //   return { {access: user.token}, ...user };
+    // },
     async session({ session, token, user }) {
-      session.data = token as any;
+      session.user = token.user as any;
       return session;
     },
   },
