@@ -16,7 +16,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useLogoutMutation } from "@/redux/features/authApiSlice";
 import { logout as setLogout } from "@/redux/features/authSlice";
 import { useRouter } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
   const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar } =
@@ -29,7 +29,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const router = useRouter();
   const { data: session } = useSession();
-  console.log("session", session);
 
   useImperativeHandle(ref, () => ({
     menubutton: menubuttonRef.current,
@@ -77,7 +76,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     logout(undefined)
       .unwrap()
       .then(() => {
-        signOut();
+        // signOut();
         dispatch(setLogout());
       })
       .catch((error: any) => {})
@@ -112,15 +111,15 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         <span className="flex gap-3 ml-3 mt-2 ">
           <span>
             <span className="text-green-600 font-bold">Logged In As </span>:{" "}
-            {session?.user?.full_name}
+            {/* {session?.user?.full_name} */}
           </span>
           <span>
             <span className="text-green-600 font-bold">Branch </span> :{" "}
-            {
+            {/* {
               session?.user?.branches.find(
                 (x: Branch) => x.id === session.user.active_branch
               )?.name
-            }
+            } */}
           </span>
         </span>
       </div>

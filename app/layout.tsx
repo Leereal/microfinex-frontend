@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { PrimeReactProvider } from "primereact/api";
-import { LayoutProvider } from "../layout/context/layoutcontext";
 import { Nunito } from "next/font/google";
 import type { Viewport } from "next";
 
@@ -10,8 +8,6 @@ import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primereact/resources/primereact.css";
 import "primeicons/primeicons.css";
 import "../styles/layout/layout.scss";
-import Provider from "@/redux/provider";
-import AuthProvider from "@/utils/next-auth/AuthProvider";
 
 const nunito = Nunito({ subsets: ["latin"] });
 
@@ -31,15 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={nunito.className}>
-        <AuthProvider>
-          <Provider>
-            <PrimeReactProvider>
-              <LayoutProvider>{children}</LayoutProvider>
-            </PrimeReactProvider>
-          </Provider>
-        </AuthProvider>
-      </body>
+      <body className={nunito.className}>{children}</body>
     </html>
   );
 }

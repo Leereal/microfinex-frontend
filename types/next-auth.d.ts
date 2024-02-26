@@ -3,6 +3,11 @@ import { User } from "./user";
 
 declare module "next-auth" {
   interface Session {
-    user: User;
+    user: UserType;
   }
+}
+
+interface PermissionCheckProps {
+  allowedPermissions?: String[];
+  notAllowedPermissions?: String[];
 }

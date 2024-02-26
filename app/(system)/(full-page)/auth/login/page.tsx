@@ -1,36 +1,40 @@
 "use client";
-import { useRouter } from "next/navigation";
-import React, {
-  ChangeEvent,
-  FormEvent,
-  useContext,
-  useRef,
-  useState,
-} from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useContext, useRef } from "react";
 import { Button } from "primereact/button";
 import { Password } from "primereact/password";
-import { LayoutContext } from "../../../../layout/context/layoutcontext";
 import { InputText } from "primereact/inputtext";
 import { classNames } from "primereact/utils";
 import { Toast } from "primereact/toast";
 import { useLoginMutation } from "@/redux/features/authApiSlice";
 import { ProgressSpinner } from "primereact/progressspinner";
-import { z } from "zod";
 import { setAuth } from "@/redux/features/authSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import Link from "next/link";
+import { LayoutContext } from "@/layout/context/layoutcontext";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoginSchema } from "@/schemas/auth.schema";
+// import { signIn } from "@/auth";
+import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
+import { AuthError } from "next-auth";
 import { signIn } from "next-auth/react";
 
 const LoginPage = () => {
   const toast = useRef<Toast | null>(null);
   const router = useRouter();
-  const [login, { isLoading, isError, isSuccess }] = useLoginMutation();
-  const dispatch = useAppDispatch();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+  // const searchParams = useSearchParams()
+  // const urlError = searchParams.get("error") === "OAuthAccountNotLinked";
+  // const [login, { isLoading, isError, isSuccess }] = useLoginMutation();
+  // const dispatch = useAppDispatch();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginForm>({
+    resolver: zodResolver(LoginSchema),
   });
-  const { email, password } = formData;
 
   const { layoutConfig } = useContext(LayoutContext);
 
@@ -39,42 +43,33 @@ const LoginPage = () => {
     { "p-input-filled": layoutConfig.inputStyle === "filled" }
   );
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-
-    setFormData({ ...formData, [id]: value });
+  const getFormErrorMessage = (name: keyof LoginForm) => {
+    return (
+      errors[name] && (
+        <div>
+          <small className="p-error">{errors[name]?.message}</small>
+        </div>
+      )
+    );
   };
 
-  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const schema = z.object({
-      email: z.string().email(),
-      password: z.string().min(6),
-    });
-
+  const onSubmit = async (data: LoginForm) => {
     try {
-      schema.parse(formData);
-      const response = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
+      await signIn("credentials", {
+        ...data,
+        callbackUrl: DEFAULT_LOGIN_REDIRECT,
       });
-
-      if (response?.error) {
-        console.log("login error", response.error);
-        showError("Login failed. Please check your credentials and try again.");
-      } else {
-        // dispatch(setAuth(response));
-        showSuccess();
-        // router.push("/dashboard");
+    } catch (error) {
+      if (error instanceof AuthError) {
+        switch (error.type) {
+          case "CredentialsSignin":
+            showError("Invalid credentials. Please try again.");
+            break;
+          default:
+            showError("Something went wrong. Please try again.");
+            break;
+        }
       }
-    } catch (error: any) {
-      console.log("validation error", error);
-      showError(
-        error.errors?.[0]?.message ||
-          "Validation failed. Please check your inputs."
-      );
     }
   };
 
@@ -123,36 +118,40 @@ const LoginPage = () => {
             className="w-full surface-card py-8 px-5 sm:px-8"
             style={{ borderRadius: "53px" }}
           >
-            <form onSubmit={onSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-900 text-xl font-medium mb-1"
-                >
-                  Email
-                </label>
-                <InputText
-                  id="email"
-                  placeholder="Email address"
-                  className="w-full md:w-30rem mb-3"
-                  onChange={onChange}
-                  value={email}
-                />
-                <label
-                  htmlFor="password"
-                  className="block text-900 font-medium text-xl mb-2"
-                >
-                  Password
-                </label>
-                <Password
-                  inputId="password"
-                  placeholder="Password"
-                  toggleMask
-                  className="w-full mb-3"
-                  inputClassName="w-full  md:w-30rem"
-                  onChange={onChange}
-                  value={password}
-                ></Password>
+                <div className="mb-3">
+                  <label
+                    htmlFor="email"
+                    className="block text-900 text-xl font-medium mb-1"
+                  >
+                    Email
+                  </label>
+                  <InputText
+                    placeholder="Email address"
+                    className="w-full md:w-30rem mb-3"
+                    {...register("email")}
+                  />
+                  {getFormErrorMessage("email")}
+                </div>
+                <div className="mb-3">
+                  <label
+                    htmlFor="password"
+                    className="block text-900 font-medium text-xl mb-2"
+                  >
+                    Password
+                  </label>
+                  <InputText
+                    type="password"
+                    // inputId="password"
+                    placeholder="Password"
+                    // toggleMask
+                    className="w-full mb-3"
+                    // inputClassName="w-full  md:w-30rem"
+                    {...register("password")}
+                  ></InputText>
+                  {getFormErrorMessage("password")}
+                </div>
 
                 <div className="flex align-items-center justify-content-between mb-5 gap-5">
                   <Link
@@ -166,8 +165,9 @@ const LoginPage = () => {
                 <Button
                   className="w-full p-3 text-xl justify-center"
                   type="submit"
+                  disabled={isSubmitting}
                 >
-                  {isLoading ? (
+                  {isSubmitting ? (
                     <ProgressSpinner
                       strokeWidth="8"
                       fill="var(--surface-ground)"

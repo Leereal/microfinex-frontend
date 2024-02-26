@@ -6,6 +6,7 @@ import { LayoutContext } from "./context/layoutcontext";
 import { MenuProvider } from "./context/menucontext";
 import Link from "next/link";
 import { AppMenuItem } from "@/types";
+import { useCheckPermissions } from "@/hooks/use-check-permission";
 
 const AppMenu = () => {
   const { layoutConfig } = useContext(LayoutContext);
@@ -14,9 +15,24 @@ const AppMenu = () => {
     {
       label: "Home",
       items: [
-        { label: "Dashboard", icon: "pi pi-fw pi-home", to: "/" },
-        { label: "Disburse Loan", icon: "pi pi-fw pi-wallet", to: "/" },
-        { label: "Make Payment", icon: "pi pi-fw pi-credit-card", to: "/" },
+        {
+          label: "Dashboard",
+          icon: "pi pi-fw pi-home",
+          to: "/dashboard",
+          permission: [],
+        },
+        {
+          label: "Disburse Loan",
+          icon: "pi pi-fw pi-wallet",
+          to: "/",
+          permission: [],
+        },
+        {
+          label: "Make Payment",
+          icon: "pi pi-fw pi-credit-card",
+          to: "/",
+          permission: [],
+        },
       ],
     },
     {
@@ -41,6 +57,7 @@ const AppMenu = () => {
           label: "All Users",
           icon: "pi pi-fw pi-id-card",
           to: "/users",
+          permission: ["view_user", "view_users"],
         },
         {
           label: "Add User",
@@ -48,6 +65,7 @@ const AppMenu = () => {
           to: "/all-clients",
         },
       ],
+      permission: [],
     },
   ];
 
@@ -55,11 +73,17 @@ const AppMenu = () => {
     <MenuProvider>
       <ul className="layout-menu">
         {model.map((item, i) => {
-          return !item?.seperator ? (
-            <AppMenuitem item={item} root={true} index={i} key={item.label} />
-          ) : (
-            <li className="menu-separator"></li>
-          );
+          // Check if the item has permission specified and if the user has that permission
+          const hasPermission =
+            !item.permission ||
+            useCheckPermissions({ allowedPermissions: item.permission });
+          return hasPermission ? (
+            !item?.seperator ? (
+              <AppMenuitem item={item} root={true} index={i} key={item.label} />
+            ) : (
+              <li className="menu-separator"></li>
+            )
+          ) : null;
         })}
 
         <Link

@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { Button } from "primereact/button";
 
-const ErrorPage = () => {
+const AccessDeniedPage = () => {
   const router = useRouter();
 
   return (
@@ -19,7 +19,7 @@ const ErrorPage = () => {
             borderRadius: "56px",
             padding: "0.3rem",
             background:
-              "linear-gradient(180deg, rgba(233, 30, 99, 0.4) 10%, rgba(33, 150, 243, 0) 30%)",
+              "linear-gradient(180deg, rgba(247, 149, 48, 0.4) 10%, rgba(247, 149, 48, 0) 30%)",
           }}
         >
           <div
@@ -32,10 +32,12 @@ const ErrorPage = () => {
             >
               <i className="pi pi-fw pi-exclamation-circle text-2xl text-white"></i>
             </div>
-            <h1 className="text-900 font-bold text-5xl mb-2">Error Occured</h1>
-            <div className="text-600 mb-5">Something went wrong.</div>
+            <h1 className="text-900 font-bold text-5xl mb-2">Access Denied</h1>
+            <div className="text-600 mb-5">
+              You do not have the necessary permisions.
+            </div>
             <img
-              src="/error/asset-error.svg"
+              src="/demo/images/access/asset-access.svg"
               alt="Error"
               className="mb-5"
               width="80%"
@@ -44,7 +46,7 @@ const ErrorPage = () => {
               icon="pi pi-arrow-left"
               label="Go to Dashboard"
               text
-              onClick={() => router.push("/")}
+              onClick={() => router.push("/dashboard")}
             />
           </div>
         </div>
@@ -53,4 +55,4 @@ const ErrorPage = () => {
   );
 };
 
-export default ErrorPage;
+export default AccessDeniedPage;
