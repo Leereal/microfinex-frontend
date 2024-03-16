@@ -16,7 +16,9 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useLogoutMutation } from "@/redux/features/authApiSlice";
 import { logout as setLogout } from "@/redux/features/authSlice";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
+import { Avatar } from "primereact/avatar";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
   const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar } =
@@ -28,7 +30,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
   const [logout] = useLogoutMutation();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const router = useRouter();
-  const { data: session } = useSession();
+  const user = useCurrentUser();
 
   useImperativeHandle(ref, () => ({
     menubutton: menubuttonRef.current,
@@ -76,12 +78,12 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     logout(undefined)
       .unwrap()
       .then(() => {
-        // signOut();
         dispatch(setLogout());
       })
       .catch((error: any) => {})
       .finally(() => {
-        router.push("/auth/login");
+        signOut();
+        // router.push("/auth/login");
       });
   };
   return (
@@ -149,7 +151,14 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
           className="p-link layout-topbar-button"
           onClick={(e) => menu?.current?.toggle(e)}
         >
-          <i className="pi pi-user"></i>
+          {user?.profile_photo ? (
+            <Avatar
+              image={`http://localhost:8080/${user?.profile_photo}`}
+              shape="circle"
+            />
+          ) : (
+            <i className="pi pi-user"></i>
+          )}
           <span>Profile</span>
         </button>
         <Link href="/documentation">

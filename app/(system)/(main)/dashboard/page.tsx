@@ -130,8 +130,8 @@ const Dashboard = () => {
         <div className="card mb-0">
           <div className="flex justify-content-between mb-3">
             <div>
-              <span className="block text-500 font-medium mb-3">Orders</span>
-              <div className="text-900 font-medium text-xl">152</div>
+              <span className="block text-500 font-medium mb-3">Clients</span>
+              <div className="text-900 font-medium text-xl">2321</div>
             </div>
             <PermissionCheck allowedPermissions={["view_user"]}>
               <div
@@ -151,14 +151,16 @@ const Dashboard = () => {
           <div className="card mb-0">
             <div className="flex justify-content-between mb-3">
               <div>
-                <span className="block text-500 font-medium mb-3">Revenue</span>
-                <div className="text-900 font-medium text-xl">$2.100</div>
+                <span className="block text-500 font-medium mb-3">
+                  Disbursements
+                </span>
+                <div className="text-900 font-medium text-xl">$235,623.00</div>
               </div>
               <div
                 className="flex align-items-center justify-content-center bg-orange-100 border-round"
                 style={{ width: "2.5rem", height: "2.5rem" }}
               >
-                <i className="pi pi-map-marker text-orange-500 text-xl" />
+                <i className="pi pi-briefcase text-orange-500 text-xl" />
               </div>
             </div>
             <span className="text-green-500 font-medium">%52+ </span>
@@ -170,26 +172,28 @@ const Dashboard = () => {
         <div className="card mb-0">
           <div className="flex justify-content-between mb-3">
             <div>
-              <span className="block text-500 font-medium mb-3">Customers</span>
-              <div className="text-900 font-medium text-xl">28441</div>
+              <span className="block text-500 font-medium mb-3">Payments</span>
+              <div className="text-900 font-medium text-xl">$132,540.00</div>
             </div>
             <div
               className="flex align-items-center justify-content-center bg-cyan-100 border-round"
               style={{ width: "2.5rem", height: "2.5rem" }}
             >
-              <i className="pi pi-inbox text-cyan-500 text-xl" />
+              <i className="pi pi-money-bill text-cyan-500 text-xl" />
             </div>
           </div>
           <span className="text-green-500 font-medium">520 </span>
-          <span className="text-500">newly registered</span>
+          <span className="text-500">transactions this week</span>
         </div>
       </div>
       <div className="col-12 lg:col-6 xl:col-3">
         <div className="card mb-0">
           <div className="flex justify-content-between mb-3">
             <div>
-              <span className="block text-500 font-medium mb-3">Comments</span>
-              <div className="text-900 font-medium text-xl">152 Unread</div>
+              <span className="block text-500 font-medium mb-3">
+                Total Loans
+              </span>
+              <div className="text-900 font-medium text-xl">3760 Processed</div>
             </div>
             <div
               className="flex align-items-center justify-content-center bg-purple-100 border-round"
@@ -198,14 +202,14 @@ const Dashboard = () => {
               <i className="pi pi-comment text-purple-500 text-xl" />
             </div>
           </div>
-          <span className="text-green-500 font-medium">85 </span>
-          <span className="text-500">responded</span>
+          <span className="text-red-500 font-medium">86 </span>
+          <span className="text-500">rejected</span>
         </div>
       </div>
 
-      <div className="col-12 xl:col-6">
+      <div className="col-12 xl:col-8">
         <div className="card">
-          <h5>Recent Sales</h5>
+          <h5>Recent Loans</h5>
           <DataTable
             value={products}
             rows={5}
@@ -394,114 +398,166 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="col-12 xl:col-6">
-        <div className="card">
-          <h5>Sales Overview</h5>
-          <Chart type="line" data={lineData} options={lineOptions} />
-        </div>
-
-        <div className="card">
-          <div className="flex align-items-center justify-content-between mb-4">
-            <h5>Notifications</h5>
-            <div>
-              <Button
-                type="button"
-                icon="pi pi-ellipsis-v"
-                rounded
-                text
-                className="p-button-plain"
-                onClick={(event) => menu2.current?.toggle(event)}
-              />
-              <Menu
-                ref={menu2}
-                popup
-                model={[
-                  { label: "Add New", icon: "pi pi-fw pi-plus" },
-                  { label: "Remove", icon: "pi pi-fw pi-minus" },
-                ]}
-              />
+      <div className="col-12 xl:col-4">
+        <div className="h-full flex flex-col">
+          <div className="card p-5 mt-6 bg-primary">
+            <div className="flex flex-wrap gap-3">
+              <div className="mr-auto">
+                <div className="text-white text-opacity-70 dark:text-slate-300 flex items-center leading-3 gap-2">
+                  AVAILABLE FUNDS
+                  <span>
+                    <i className="pi pi-info-circle"></i>
+                  </span>
+                </div>
+                <div className="text-white relative text-2xl font-medium leading-5 pl-4 mt-3.5">
+                  {" "}
+                  <span className="absolute text-xl top-0 left-0 -mt-1.5">
+                    $
+                  </span>{" "}
+                  479,578.77{" "}
+                </div>
+              </div>
+              <div className="w-[15px] h-[15px] mr-5">
+                <Button className="flex items-center  justify-center rounded-full bg-white dark:bg-darkmode-300 opacity-50 hover:opacity-30 text-white px-[0.95rem] py-[0.65rem]">
+                  <span className="text-primary">
+                    <i className="pi pi-plus"></i>
+                  </span>
+                </Button>
+              </div>
             </div>
           </div>
-
-          <span className="block text-600 font-medium mb-3">TODAY</span>
-          <ul className="p-0 mx-0 mt-0 mb-4 list-none">
-            <li className="flex align-items-center py-2 border-bottom-1 surface-border">
-              <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-                <i className="pi pi-dollar text-xl text-blue-500" />
+          <div className="card xl:min-h-0">
+            <div className="max-h-full xl:overflow-y-auto">
+              <div className="xl:sticky top-0 px-5 pb-6">
+                <div className="flex items-center">
+                  <div className="text-lg font-medium truncate mr-5">
+                    Summary Report
+                  </div>
+                  <a href="" className="ml-auto flex items-center text-primary">
+                    <span>
+                      <i className="pi pi-refresh"></i>
+                    </span>
+                  </a>
+                </div>
+                <ul
+                  className=" nav nav-pills border border-slate-300 dark:border-darkmode-300 border-dashed rounded-md mx-auto p-1 mt-5 "
+                  role="tablist"
+                >
+                  <li
+                    id="weekly-report-tab"
+                    className="nav-item flex-1"
+                    role="presentation"
+                  >
+                    <button
+                      className="nav-link w-full py-1.5 px-2 active"
+                      data-tw-toggle="pill"
+                      data-tw-target="#weekly-report"
+                      type="button"
+                      role="tab"
+                      aria-controls="weekly-report"
+                      aria-selected="true"
+                    >
+                      {" "}
+                      Weekly{" "}
+                    </button>
+                  </li>
+                  <li
+                    id="monthly-report-tab"
+                    className="nav-item flex-1"
+                    role="presentation"
+                  >
+                    <button
+                      className="nav-link w-full py-1.5 px-2"
+                      data-tw-toggle="pill"
+                      data-tw-target="#monthly-report"
+                      type="button"
+                      role="tab"
+                      aria-selected="false"
+                    >
+                      {" "}
+                      Monthly{" "}
+                    </button>
+                  </li>
+                </ul>
               </div>
-              <span className="text-900 line-height-3">
-                Richard Jones
-                <span className="text-700">
-                  {" "}
-                  has purchased a blue t-shirt for{" "}
-                  <span className="text-blue-500">79$</span>
-                </span>
-              </span>
-            </li>
-            <li className="flex align-items-center py-2">
-              <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-orange-100 border-circle mr-3 flex-shrink-0">
-                <i className="pi pi-download text-xl text-orange-500" />
+              <div className="tab-content px-5 pb-5">
+                <div className="tab-pane active grid grid-cols-12 gap-y-6">
+                  <div className="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-12">
+                    <div className="text-slate-500">Unpaid Loan</div>
+                    <div className="mt-1.5 flex items-center">
+                      <div className="text-lg">$155.430.000</div>
+                      <div className="text-danger flex text-xs font-medium tooltip cursor-pointer ml-2">
+                        2%
+                        <span>
+                          <i className="pi pi-chevron-down"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-12">
+                    <div className="text-slate-500">Active Funding Partner</div>
+                    <div className="mt-1.5 flex items-center">
+                      <div className="text-lg">52 Partner</div>
+                      <div className="text-success flex text-xs font-medium tooltip cursor-pointer ml-2">
+                        {" "}
+                        49%{" "}
+                        <span>
+                          <i className="pi pi-chevron-up"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-12">
+                    <div className="text-slate-500">Paid Installment</div>
+                    <div className="mt-1.5 flex items-center">
+                      <div className="text-lg">$75.430.000</div>
+                      <div className="text-success flex text-xs font-medium tooltip cursor-pointer ml-2">
+                        {" "}
+                        36%{" "}
+                        <span>
+                          <i className="pi pi-chevron-down"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-12">
+                    <div className="text-slate-500">Success Payment</div>
+                    <div className="mt-1.5 flex items-center">
+                      <div className="text-lg">100%</div>
+                    </div>
+                  </div>
+                  <div className="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-12">
+                    <div className="text-slate-500">
+                      Waiting For Disbursement
+                    </div>
+                    <div className="mt-1.5 flex items-center">
+                      <div className="text-lg">0</div>
+                    </div>
+                  </div>
+                  <div className="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-12">
+                    <div className="text-slate-500">Unpaid Loan</div>
+                    <div className="mt-1.5 flex items-center">
+                      <div className="text-lg">$21.430.000</div>
+                      <div className="text-danger flex text-xs font-medium tooltip cursor-pointer ml-2">
+                        {" "}
+                        23%{" "}
+                        <span>
+                          <i className="pi pi-chevron-down"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <button className="btn btn-outline-secondary col-span-12 border-slate-300 dark:border-darkmode-300 border-dashed relative justify-start mb-2">
+                    <span className="truncate mr-5">My Portfolio Details</span>
+                    <span className="w-8 h-8 absolute flex justify-center items-center right-0 top-0 bottom-0 my-auto ml-auto mr-0.5">
+                      <span>
+                        <i className="pi pi-chevron-down"></i>
+                      </span>
+                    </span>
+                  </button>
+                </div>
               </div>
-              <span className="text-700 line-height-3">
-                Your request for withdrawal of{" "}
-                <span className="text-blue-500 font-medium">2500$</span> has
-                been initiated.
-              </span>
-            </li>
-          </ul>
-
-          <span className="block text-600 font-medium mb-3">YESTERDAY</span>
-          <ul className="p-0 m-0 list-none">
-            <li className="flex align-items-center py-2 border-bottom-1 surface-border">
-              <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-                <i className="pi pi-dollar text-xl text-blue-500" />
-              </div>
-              <span className="text-900 line-height-3">
-                Keyser Wick
-                <span className="text-700">
-                  {" "}
-                  has purchased a black jacket for{" "}
-                  <span className="text-blue-500">59$</span>
-                </span>
-              </span>
-            </li>
-            <li className="flex align-items-center py-2 border-bottom-1 surface-border">
-              <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-pink-100 border-circle mr-3 flex-shrink-0">
-                <i className="pi pi-question text-xl text-pink-500" />
-              </div>
-              <span className="text-900 line-height-3">
-                Jane Davis
-                <span className="text-700">
-                  {" "}
-                  has posted a new questions about your product.
-                </span>
-              </span>
-            </li>
-          </ul>
-        </div>
-        <div
-          className="px-4 py-5 shadow-2 flex flex-column md:flex-row md:align-items-center justify-content-between mb-3"
-          style={{
-            borderRadius: "1rem",
-            background:
-              "linear-gradient(0deg, rgba(0, 123, 255, 0.5), rgba(0, 123, 255, 0.5)), linear-gradient(92.54deg, #1C80CF 47.88%, #FFFFFF 100.01%)",
-          }}
-        >
-          <div>
-            <div className="text-blue-100 font-medium text-xl mt-2 mb-3">
-              TAKE THE NEXT STEP
             </div>
-            <div className="text-white font-medium text-5xl">
-              Try PrimeBlocks
-            </div>
-          </div>
-          <div className="mt-4 mr-auto md:mt-0 md:mr-0">
-            <Link
-              href="https://blocks.primereact.org"
-              className="p-button font-bold px-5 py-3 p-button-warning p-button-rounded p-button-raised"
-            >
-              Get Started
-            </Link>
           </div>
         </div>
       </div>

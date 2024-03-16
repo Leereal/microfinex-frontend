@@ -16,7 +16,11 @@ export const {
   //   }
   // },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      //We update token with new updated user from session so that we fully update the session user at server side
+      if (trigger === "update") return { ...token, user: session.user };
+
+      //We get user the first time of login
       if (user) token.user = user;
       return token;
     },

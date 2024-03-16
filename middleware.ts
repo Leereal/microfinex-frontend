@@ -35,8 +35,12 @@ export default auth(async (req) => {
     return Response.redirect(new URL("/auth/login", nextUrl));
   }
   //Force switching branch if user doesn't have active_branch
-  if (canSwitchBranch && !user.active_branch) {
-    return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
+  if (
+    canSwitchBranch &&
+    !user.active_branch &&
+    nextUrl.pathname !== "/switch-branch"
+  ) {
+    return Response.redirect(new URL("/switch-branch", nextUrl));
   }
 
   //Disallow switching branches for users with not more than one branch

@@ -41,3 +41,15 @@ interface UserType {
   user_permissions: Permission[];
   admin: boolean;
 }
+
+interface ProfileType {
+  id: number;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  email: string;
+  profile_photo: string | null;
+  phone: string | null;
+  gender: string;
+  branches: string[];
+}

@@ -9,12 +9,12 @@ import {
 } from "@/redux/features/authApiSlice";
 import { LayoutContext } from "@/layout/context/layoutcontext";
 import { Dropdown } from "primereact/dropdown";
-import { Branch } from "@/types/user";
 import { ProgressSpinner } from "primereact/progressspinner";
+import { useSession } from "next-auth/react";
 const SwitchPage = () => {
   const toast = useRef<Toast | null>(null);
   const router = useRouter();
-  const { data, isLoading: loading, isError } = useRetrieveUserQuery();
+  const { data: session, update } = useSession();
 
   const [switchBranch, { isLoading }] = useSwitchBranchMutation();
   const [branch, setBranch] = useState<Branch>();
@@ -33,8 +33,16 @@ const SwitchPage = () => {
         branch: selectedBranch.id,
       })
         .unwrap()
-        .then(() => {
+        .then(async () => {
+          await update({
+            ...session,
+            user: {
+              ...session?.user,
+              active_branch: selectedBranch.id,
+            },
+          });
           showSuccess();
+          router.push("/dashboard");
         })
         .catch((error: any) => {
           console.log("error", error);
@@ -107,7 +115,7 @@ const SwitchPage = () => {
               <Dropdown
                 value={branch}
                 onChange={(e) => changeBranch(e.value)}
-                options={data?.branches}
+                options={session?.user?.branches}
                 optionLabel="name"
                 placeholder="Select Branch"
                 className="w-full  mb-6"

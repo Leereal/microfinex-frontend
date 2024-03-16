@@ -67,6 +67,42 @@ const AppMenu = () => {
       ],
       permission: [],
     },
+    {
+      label: "Branches",
+      items: [
+        {
+          label: "All Branches",
+          icon: "pi pi-fw pi-id-card",
+          to: "/branches",
+          permission: [],
+        },
+        {
+          label: "Branch Assets",
+          icon: "pi pi-fw pi-id-card",
+          to: "/branch-assets",
+          permission: [],
+        },
+      ],
+      permission: [],
+    },
+    {
+      label: "Settings",
+      items: [
+        {
+          label: "General Settings",
+          icon: "pi pi-fw pi-id-card",
+          to: "/settings",
+          permission: [],
+        },
+        {
+          label: "Audit Changes",
+          icon: "pi pi-fw pi-id-card",
+          to: "/settings/audit-change",
+          permission: [],
+        },
+      ],
+      permission: [],
+    },
   ];
 
   return (

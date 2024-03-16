@@ -9,6 +9,7 @@ import { classNames } from "primereact/utils";
 import React, { useContext, useEffect, useState } from "react";
 import { AppConfigProps, LayoutConfig, LayoutState } from "@/types";
 import { LayoutContext } from "./context/layoutcontext";
+import { SelectButton } from "primereact/selectbutton";
 
 const AppConfig = (props: AppConfigProps) => {
   const [scales] = useState([12, 13, 14, 15, 16]);
@@ -61,6 +62,12 @@ const AppConfig = (props: AppConfigProps) => {
       }));
     });
   };
+  const [value, setValue] = useState(null);
+  const items = [
+    { name: "Harare", value: 1 },
+    { name: "Bulawayo", value: 2 },
+    { name: "Gweru", value: 3 },
+  ];
 
   const decrementScale = () => {
     setLayoutConfig((prevState: LayoutConfig) => ({
@@ -103,7 +110,7 @@ const AppConfig = (props: AppConfigProps) => {
       >
         {!props.simple && (
           <>
-            <h5>Preferences</h5>
+            <h5>Zoom View</h5>
             <div className="flex align-items-center">
               <Button
                 icon="pi pi-minus"
@@ -138,7 +145,7 @@ const AppConfig = (props: AppConfigProps) => {
               ></Button>
             </div>
 
-            <h5>Default Branch</h5>
+            <h5>Default View</h5>
             <div className="flex">
               <div className="field-radiobutton flex-1">
                 <RadioButton
@@ -160,6 +167,15 @@ const AppConfig = (props: AppConfigProps) => {
                 ></RadioButton>
                 <label htmlFor="mode2">Overlay</label>
               </div>
+            </div>
+            <h5>Switch Branch</h5>
+            <div className="card">
+              <SelectButton
+                value={value}
+                onChange={(e) => setValue(e.value)}
+                optionLabel="name"
+                options={items}
+              />
             </div>
           </>
         )}
