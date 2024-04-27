@@ -8,8 +8,8 @@ type BranchModalProps = {
   visible: boolean;
   onHide: () => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-  register: any; // Replace with the appropriate type for the register function
-  errors: any; // Replace with the appropriate type for the errors object
+  register: any;
+  errors: any;
   isSubmitting: boolean;
 };
 

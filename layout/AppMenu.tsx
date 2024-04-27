@@ -24,7 +24,7 @@ const AppMenu = () => {
         {
           label: "Disburse Loan",
           icon: "pi pi-fw pi-wallet",
-          to: "/",
+          to: "/loans",
           permission: [],
         },
         {

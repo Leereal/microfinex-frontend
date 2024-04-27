@@ -11,6 +11,7 @@ import { ChartData, ChartOptions } from "chart.js";
 import { LayoutContext } from "@/layout/context/layoutcontext";
 import { ProductService } from "@/demo/service/ProductService";
 import { PermissionCheck } from "@/components/auth/PermissionCheck";
+import { useGetDashboardQuery } from "@/redux/features/dashboardApiSlice";
 
 const lineData: ChartData = {
   labels: ["January", "February", "March", "April", "May", "June", "July"],
@@ -40,6 +41,7 @@ const Dashboard = () => {
   const menu2 = useRef<Menu>(null);
   const [lineOptions, setLineOptions] = useState<ChartOptions>({});
   const { layoutConfig } = useContext(LayoutContext);
+  const { data: dashboard, isError, isLoading } = useGetDashboardQuery();
 
   const applyLightTheme = () => {
     const lineOptions: ChartOptions = {
@@ -109,6 +111,8 @@ const Dashboard = () => {
     ProductService.getProductsSmall().then((data) => setProducts(data));
   }, []);
 
+  console.log("Dashboard data", dashboard);
+
   useEffect(() => {
     if (layoutConfig.colorScheme === "light") {
       applyLightTheme();
@@ -131,18 +135,22 @@ const Dashboard = () => {
           <div className="flex justify-content-between mb-3">
             <div>
               <span className="block text-500 font-medium mb-3">Clients</span>
-              <div className="text-900 font-medium text-xl">2321</div>
+              <div className="text-900 font-medium text-xl">
+                {dashboard?.total_clients}
+              </div>
             </div>
             <PermissionCheck allowedPermissions={["view_user"]}>
               <div
                 className="flex align-items-center justify-content-center bg-blue-100 border-round"
                 style={{ width: "2.5rem", height: "2.5rem" }}
               >
-                <i className="pi pi-shopping-cart text-blue-500 text-xl" />
+                <i className="pi pi-users text-blue-500 text-xl" />
               </div>
             </PermissionCheck>
           </div>
-          <span className="text-green-500 font-medium">24 new </span>
+          <span className="text-green-500 font-medium">
+            {dashboard?.new_clients_this_week} new{" "}
+          </span>
           <span className="text-500">since last visit</span>
         </div>
       </div>
@@ -154,7 +162,9 @@ const Dashboard = () => {
                 <span className="block text-500 font-medium mb-3">
                   Disbursements
                 </span>
-                <div className="text-900 font-medium text-xl">$235,623.00</div>
+                <div className="text-900 font-medium text-xl">
+                  ${dashboard?.total_disbursements_amount}
+                </div>
               </div>
               <div
                 className="flex align-items-center justify-content-center bg-orange-100 border-round"
@@ -163,7 +173,9 @@ const Dashboard = () => {
                 <i className="pi pi-briefcase text-orange-500 text-xl" />
               </div>
             </div>
-            <span className="text-green-500 font-medium">%52+ </span>
+            <span className="text-green-500 font-medium">
+              %{dashboard?.percentage_increase_disbursements}+{" "}
+            </span>
             <span className="text-500">since last week</span>
           </div>
         </div>
@@ -173,7 +185,9 @@ const Dashboard = () => {
           <div className="flex justify-content-between mb-3">
             <div>
               <span className="block text-500 font-medium mb-3">Payments</span>
-              <div className="text-900 font-medium text-xl">$132,540.00</div>
+              <div className="text-900 font-medium text-xl">
+                ${dashboard?.total_payments_amount}
+              </div>
             </div>
             <div
               className="flex align-items-center justify-content-center bg-cyan-100 border-round"
@@ -182,7 +196,9 @@ const Dashboard = () => {
               <i className="pi pi-money-bill text-cyan-500 text-xl" />
             </div>
           </div>
-          <span className="text-green-500 font-medium">520 </span>
+          <span className="text-green-500 font-medium">
+            {dashboard?.total_payments}{" "}
+          </span>
           <span className="text-500">transactions this week</span>
         </div>
       </div>
@@ -193,16 +209,20 @@ const Dashboard = () => {
               <span className="block text-500 font-medium mb-3">
                 Total Loans
               </span>
-              <div className="text-900 font-medium text-xl">3760 Processed</div>
+              <div className="text-900 font-medium text-xl">
+                {dashboard?.total_loans_processed} Processed
+              </div>
             </div>
             <div
               className="flex align-items-center justify-content-center bg-purple-100 border-round"
               style={{ width: "2.5rem", height: "2.5rem" }}
             >
-              <i className="pi pi-comment text-purple-500 text-xl" />
+              <i className="pi pi-book text-purple-500 text-xl" />
             </div>
           </div>
-          <span className="text-red-500 font-medium">86 </span>
+          <span className="text-red-500 font-medium">
+            {dashboard?.rejected_loans_count}{" "}
+          </span>
           <span className="text-500">rejected</span>
         </div>
       </div>
@@ -210,197 +230,41 @@ const Dashboard = () => {
       <div className="col-12 xl:col-8">
         <div className="card">
           <h5>Recent Loans</h5>
-          <DataTable
-            value={products}
-            rows={5}
-            paginator
-            responsiveLayout="scroll"
-          >
+          <DataTable value={dashboard?.recent_loans} rows={5} paginator>
             <Column
-              header="Image"
-              body={(data) => (
-                <img
-                  className="shadow-2"
-                  src={`/demo/images/product/${data.image}`}
-                  alt={data.image}
-                  width="50"
-                />
-              )}
-            />
-            <Column
-              field="name"
-              header="Name"
+              field="disbursement_date"
+              header="Date Disbursed"
               sortable
-              style={{ width: "35%" }}
             />
+            <Column field="client_full_name" header="Client Name" sortable />
             <Column
-              field="price"
-              header="Price"
+              field="amount"
+              header="Amount Disbursed"
               sortable
-              style={{ width: "35%" }}
-              body={(data) => formatCurrency(data.price)}
+              body={(data) => formatCurrency(data.amount)}
             />
+            <Column field="loan_created_by" header="Disbursed By" sortable />
             <Column
               header="View"
-              style={{ width: "15%" }}
               body={() => (
                 <>
-                  <Button icon="pi pi-search" text />
+                  <Button icon="pi pi-eye" text />
                 </>
               )}
             />
           </DataTable>
         </div>
-        <div className="card">
-          <div className="flex justify-content-between align-items-center mb-5">
-            <h5>Best Selling Products</h5>
-            <div>
-              <Button
-                type="button"
-                icon="pi pi-ellipsis-v"
-                rounded
-                text
-                className="p-button-plain"
-                onClick={(event) => menu1.current?.toggle(event)}
-              />
-              <Menu
-                ref={menu1}
-                popup
-                model={[
-                  { label: "Add New", icon: "pi pi-fw pi-plus" },
-                  { label: "Remove", icon: "pi pi-fw pi-minus" },
-                ]}
-              />
-            </div>
-          </div>
-          <ul className="list-none p-0 m-0">
-            <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-              <div>
-                <span className="text-900 font-medium mr-2 mb-1 md:mb-0">
-                  Space T-Shirt
-                </span>
-                <div className="mt-1 text-600">Clothing</div>
-              </div>
-              <div className="mt-2 md:mt-0 flex align-items-center">
-                <div
-                  className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                  style={{ height: "8px" }}
-                >
-                  <div
-                    className="bg-orange-500 h-full"
-                    style={{ width: "50%" }}
-                  />
-                </div>
-                <span className="text-orange-500 ml-3 font-medium">%50</span>
-              </div>
-            </li>
-            <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-              <div>
-                <span className="text-900 font-medium mr-2 mb-1 md:mb-0">
-                  Portal Sticker
-                </span>
-                <div className="mt-1 text-600">Accessories</div>
-              </div>
-              <div className="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                <div
-                  className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                  style={{ height: "8px" }}
-                >
-                  <div
-                    className="bg-cyan-500 h-full"
-                    style={{ width: "16%" }}
-                  />
-                </div>
-                <span className="text-cyan-500 ml-3 font-medium">%16</span>
-              </div>
-            </li>
-            <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-              <div>
-                <span className="text-900 font-medium mr-2 mb-1 md:mb-0">
-                  Supernova Sticker
-                </span>
-                <div className="mt-1 text-600">Accessories</div>
-              </div>
-              <div className="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                <div
-                  className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                  style={{ height: "8px" }}
-                >
-                  <div
-                    className="bg-pink-500 h-full"
-                    style={{ width: "67%" }}
-                  />
-                </div>
-                <span className="text-pink-500 ml-3 font-medium">%67</span>
-              </div>
-            </li>
-            <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-              <div>
-                <span className="text-900 font-medium mr-2 mb-1 md:mb-0">
-                  Wonders Notebook
-                </span>
-                <div className="mt-1 text-600">Office</div>
-              </div>
-              <div className="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                <div
-                  className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                  style={{ height: "8px" }}
-                >
-                  <div
-                    className="bg-green-500 h-full"
-                    style={{ width: "35%" }}
-                  />
-                </div>
-                <span className="text-green-500 ml-3 font-medium">%35</span>
-              </div>
-            </li>
-            <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-              <div>
-                <span className="text-900 font-medium mr-2 mb-1 md:mb-0">
-                  Mat Black Case
-                </span>
-                <div className="mt-1 text-600">Accessories</div>
-              </div>
-              <div className="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                <div
-                  className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                  style={{ height: "8px" }}
-                >
-                  <div
-                    className="bg-purple-500 h-full"
-                    style={{ width: "75%" }}
-                  />
-                </div>
-                <span className="text-purple-500 ml-3 font-medium">%75</span>
-              </div>
-            </li>
-            <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-              <div>
-                <span className="text-900 font-medium mr-2 mb-1 md:mb-0">
-                  Robots T-Shirt
-                </span>
-                <div className="mt-1 text-600">Clothing</div>
-              </div>
-              <div className="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                <div
-                  className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                  style={{ height: "8px" }}
-                >
-                  <div
-                    className="bg-teal-500 h-full"
-                    style={{ width: "40%" }}
-                  />
-                </div>
-                <span className="text-teal-500 ml-3 font-medium">%40</span>
-              </div>
-            </li>
-          </ul>
-        </div>
       </div>
 
       <div className="col-12 xl:col-4">
         <div className="h-full flex flex-col">
-          <div className="card p-5 mt-6 bg-primary">
+          <div
+            className={`card p-5 mt-6 ${
+              dashboard && dashboard?.available_funds >= 0
+                ? " bg-green-500"
+                : " bg-red-500"
+            }`}
+          >
             <div className="flex flex-wrap gap-3">
               <div className="mr-auto">
                 <div className="text-white text-opacity-70 dark:text-slate-300 flex items-center leading-3 gap-2">
@@ -414,7 +278,7 @@ const Dashboard = () => {
                   <span className="absolute text-xl top-0 left-0 -mt-1.5">
                     $
                   </span>{" "}
-                  479,578.77{" "}
+                  {dashboard?.available_funds}
                 </div>
               </div>
               <div className="w-[15px] h-[15px] mr-5">

@@ -70,6 +70,7 @@ export const apiSlice = createApi({
     "AuditChange",
     "BranchAsset",
     "Disbursement",
+    "Client",
   ],
   endpoints: (builder) => ({}),
 });

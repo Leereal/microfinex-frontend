@@ -12,10 +12,15 @@ import { disbursementDefaultValues } from "@/constants/default.values";
 import LoanList from "./_components/LoanList";
 import LoanModal from "./_components/LoanModal";
 import { ProgressSpinner } from "primereact/progressspinner";
+import { useGetCurrenciesQuery } from "@/redux/features/currencyApiSlice";
+import { useGetClientsQuery } from "@/redux/features/clientApiSlice";
+import { DevTool } from "@hookform/devtools";
 
 const LoansPage = () => {
   const toast = useRef<Toast | null>(null);
   const { data: loans, isError, isLoading } = useGetLoansQuery();
+  const { data: currencies } = useGetCurrenciesQuery();
+  const { data: clients } = useGetClientsQuery();
   const [visible, setVisible] = useState(false);
 
   const {
@@ -23,6 +28,7 @@ const LoansPage = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    control,
   } = useForm({
     resolver: zodResolver(DisbursementTypeSchema),
     defaultValues: disbursementDefaultValues,
@@ -88,14 +94,20 @@ const LoansPage = () => {
         {isLoading && <ProgressSpinner />}
         {loans && <LoanList loans={loans} onCreate={onDisburseLoan} />}
       </div>
-      <LoanModal
-        visible={visible}
-        onHide={onHideModal}
-        onSubmit={handleSubmit(onSubmit)}
-        register={register}
-        errors={errors}
-        isSubmitting={isSubmitting}
-      />
+      {clients && currencies && (
+        <LoanModal
+          visible={visible}
+          onHide={onHideModal}
+          onSubmit={handleSubmit(onSubmit)}
+          register={register}
+          errors={errors}
+          isSubmitting={isSubmitting}
+          clients={clients}
+          currencies={currencies}
+          control={control}
+        />
+      )}
+      <DevTool control={control} />
     </div>
   );
 };

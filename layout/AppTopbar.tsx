@@ -113,15 +113,14 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         <span className="flex gap-3 ml-3 mt-2 ">
           <span>
             <span className="text-green-600 font-bold">Logged In As </span>:{" "}
-            {/* {session?.user?.full_name} */}
+            {user?.full_name}
           </span>
           <span>
             <span className="text-green-600 font-bold">Branch </span> :{" "}
-            {/* {
-              session?.user?.branches.find(
-                (x: Branch) => x.id === session.user.active_branch
-              )?.name
-            } */}
+            {
+              user?.branches.find((x: Branch) => x.id === user.active_branch)
+                ?.name
+            }
           </span>
         </span>
       </div>
