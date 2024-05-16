@@ -1,7 +1,13 @@
+"use client";
 import React from "react";
+import Banner from "./_components/Banner";
 
 const HomePage = () => {
-  return <div>HomePage</div>;
+  return (
+    <div>
+      <Banner />
+    </div>
+  );
 };
 
 export default HomePage;
