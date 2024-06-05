@@ -6,6 +6,7 @@ import type {
 } from "@reduxjs/toolkit/query";
 import { setAuth, logout } from "../features/authSlice";
 import { Mutex } from "async-mutex";
+import { signOut } from "next-auth/react";
 
 const mutex = new Mutex();
 const baseQuery = fetchBaseQuery({
@@ -33,15 +34,18 @@ const baseQueryWithReauth: BaseQueryFn<
           api,
           extraOptions
         );
+        console.log("Refresh result => ", refreshResult.data);
         if (refreshResult.data) {
-          console.log("refreshed token", refreshResult.data);
           //If login successful, set the auth state to true here
-          api.dispatch(setAuth());
+          // api.dispatch(setAuth());
 
+          // console.log("Performing reauth due to 401 error");
           result = await baseQuery(args, api, extraOptions);
         } else {
           //if not successful, logout and redirect to login page
-          api.dispatch(logout());
+          // console.log("Performing logout due to 401 error");
+          // api.dispatch(logout());
+          signOut();
         }
       } finally {
         release();
@@ -57,5 +61,16 @@ const baseQueryWithReauth: BaseQueryFn<
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReauth,
+  tagTypes: [
+    "Branch",
+    "User",
+    "Currency",
+    "Product",
+    "BranchProduct",
+    "AuditChange",
+    "BranchAsset",
+    "Disbursement",
+    "Client",
+  ],
   endpoints: (builder) => ({}),
 });

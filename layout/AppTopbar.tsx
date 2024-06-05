@@ -16,6 +16,9 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useLogoutMutation } from "@/redux/features/authApiSlice";
 import { logout as setLogout } from "@/redux/features/authSlice";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
+import { Avatar } from "primereact/avatar";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
   const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar } =
@@ -27,6 +30,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
   const [logout] = useLogoutMutation();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const router = useRouter();
+  const user = useCurrentUser();
 
   useImperativeHandle(ref, () => ({
     menubutton: menubuttonRef.current,
@@ -78,7 +82,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
       })
       .catch((error: any) => {})
       .finally(() => {
-        router.push("/auth/login");
+        signOut();
+        // router.push("/auth/login");
       });
   };
   return (
@@ -96,14 +101,29 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         <span>MICROFINEX</span>
       </Link>
 
-      <button
-        ref={menubuttonRef}
-        type="button"
-        className="p-link layout-menu-button layout-topbar-button"
-        onClick={onMenuToggle}
-      >
-        <i className="pi pi-bars" />
-      </button>
+      <div className="flex items-center">
+        <button
+          ref={menubuttonRef}
+          type="button"
+          className="p-link layout-menu-button layout-topbar-button"
+          onClick={onMenuToggle}
+        >
+          <i className="pi pi-bars" />
+        </button>
+        <span className="flex gap-3 ml-3 mt-2 ">
+          <span>
+            <span className="text-green-600 font-bold">Logged In As </span>:{" "}
+            {user?.full_name}
+          </span>
+          <span>
+            <span className="text-green-600 font-bold">Branch </span> :{" "}
+            {
+              user?.branches.find((x: Branch) => x.id === user.active_branch)
+                ?.name
+            }
+          </span>
+        </span>
+      </div>
 
       <button
         ref={topbarmenubuttonRef}
@@ -130,7 +150,14 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
           className="p-link layout-topbar-button"
           onClick={(e) => menu?.current?.toggle(e)}
         >
-          <i className="pi pi-user"></i>
+          {user?.profile_photo ? (
+            <Avatar
+              image={`http://localhost:8080/${user?.profile_photo}`}
+              shape="circle"
+            />
+          ) : (
+            <i className="pi pi-user"></i>
+          )}
           <span>Profile</span>
         </button>
         <Link href="/documentation">

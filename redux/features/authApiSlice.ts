@@ -1,11 +1,10 @@
-import { User } from "@/types/user";
 import { apiSlice } from "../services/apiSlice";
 
 //This will help not to have all endpoints configured in apiSlice
 //So we have authApiSlice that will have all the endpoints related to authentication
 const authApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    retrieveUser: builder.query<User, void>({
+    retrieveUser: builder.query<UserType, void>({
       query: () => "/auth/user/",
     }),
     verifyToken: builder.mutation({
