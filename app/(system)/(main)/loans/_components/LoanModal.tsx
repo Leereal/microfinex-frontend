@@ -86,7 +86,7 @@ const LoanModal = ({
         <FormAutocomplete
           label="Client"
           id="client"
-          register={register}
+          // register={register}
           error={errors.client}
           clients={clients} // Assuming clientList is your list of clients
           control={control}
@@ -111,7 +111,7 @@ const LoanModal = ({
           id="currency"
           //TODO currencies must come from the branch settings default or global settings. If not the default must be from settings then allow users to choose from list as well.
           options={currencies.map((currency) => ({
-            label: currency.code,
+            label: currency.name,
             value: currency.id,
           }))}
           placeholder="Select a Currency"

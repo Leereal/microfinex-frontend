@@ -29,16 +29,16 @@ const BranchesPage = () => {
 
   const [createBranchAsset] = useCreateBranchAssetMutation();
 
-  const onSubmit = async (data: BranchAssetType) => {
-    createBranchAsset(data)
-      .unwrap()
-      .then(() => {
-        showSuccess();
-        reset();
-      })
-      .catch(() => {
-        showError("Failed to create branch. Please try again.");
-      });
+  const onSubmit = async () => {
+    // createBranchAsset(data)
+    //   .unwrap()
+    //   .then(() => {
+    //     showSuccess();
+    //     reset();
+    //   })
+    //   .catch(() => {
+    //     showError("Failed to create branch. Please try again.");
+    //   });
   };
 
   const showError = (errorMessage: string) => {

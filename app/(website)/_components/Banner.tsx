@@ -3,25 +3,26 @@ import { Container, Box, Heading, Text, Image, Button } from "theme-ui";
 
 export default function Banner() {
   return (
-    <section sx={styles.banner} id="home">
-      <Container sx={styles.banner.container}>
-        <Box sx={styles.banner.contentBox}>
-          <Heading as="h1" variant="heroPrimary">
-            Top Quality Digital Products To Explore
-          </Heading>
-          <Text as="p" variant="heroSecondary">
-            Get your blood tests delivered at let home collect sample from the
-            victory of the managements that supplies best design system
-            guidelines ever.
-          </Text>
-          <Button variant="primary">Explore</Button>
-        </Box>
+    <div>Banner here</div>
+    // <section sx={styles.banner} id="home">
+    //   <Container sx={styles.banner.container}>
+    //     <Box sx={styles.banner.contentBox}>
+    //       <Heading as="h1" variant="heroPrimary">
+    //         Top Quality Digital Products To Explore
+    //       </Heading>
+    //       <Text as="p" variant="heroSecondary">
+    //         Get your blood tests delivered at let home collect sample from the
+    //         victory of the managements that supplies best design system
+    //         guidelines ever.
+    //       </Text>
+    //       <Button variant="primary">Explore</Button>
+    //     </Box>
 
-        <Box sx={styles.banner.imageBox}>
-          <Image src="images/banner-thumb.png" alt="banner" />
-        </Box>
-      </Container>
-    </section>
+    //     <Box sx={styles.banner.imageBox}>
+    //       <Image src="images/banner-thumb.png" alt="banner" />
+    //     </Box>
+    //   </Container>
+    // </section>
   );
 }
 

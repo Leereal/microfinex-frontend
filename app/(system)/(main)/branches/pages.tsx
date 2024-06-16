@@ -22,7 +22,7 @@ import { classNames } from "primereact/utils";
 
 const BranchesPage = () => {
   const toast = useRef<Toast | null>(null);
-  const { data: branches, isError, isLoading } = useGetBranchesQuery({});
+  const { data: branches, isError, isLoading } = useGetBranchesQuery();
   const [
     createBranch,
     { isLoading: createLoading, isError: createError, isSuccess },

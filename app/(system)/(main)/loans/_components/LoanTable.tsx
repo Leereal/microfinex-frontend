@@ -103,7 +103,7 @@ const LoanTable = ({ loans }: { loans: DataTableValueArray }) => {
       value={loans}
       dataKey="id"
       rowExpansionTemplate={rowExpansionTemplate}
-      expandedRows={expandedRows}
+      expandedRows={expandedRows || []}
       onRowToggle={(e: any) => setExpandedRows(e.data)}
       header={header}
       tableStyle={{ minWidth: "60rem" }}
@@ -115,19 +115,19 @@ const LoanTable = ({ loans }: { loans: DataTableValueArray }) => {
       <Column
         field="disbursement_date"
         header="Disbursement Date"
-        body={(rowData) => formatDate(rowData.disbursement_date)}
+        // body={(rowData) => formatDate(rowData.disbursement_date)}
         sortable
       />
       <Column
         field="start_date"
         header="Start Date"
-        body={(rowData) => formatDate(rowData.start_date)}
+        // body={(rowData) => formatDate(rowData.start_date)}
         sortable
       />
       <Column
         field="expected_repayment_date"
         header="Expected Repayment Date"
-        body={(rowData) => formatDate(rowData.expected_repayment_date)}
+        // body={(rowData) => formatDate(rowData.expected_repayment_date)}
         sortable
       />
       <Column
