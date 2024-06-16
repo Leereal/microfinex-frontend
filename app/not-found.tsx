@@ -42,7 +42,7 @@ const NotFoundPage = () => {
                   Permission Issue or Page Removed
                 </span>
                 <span className="text-600 lg:text-lg">
-                  It's either the resource is not available or you don't have
+                  Either the resource is not available or you do not have
                   permission to view it.
                 </span>
               </span>
