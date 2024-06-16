@@ -16,7 +16,7 @@ jobs:
       matrix:
         node-version: [v20.14.0]
     env:
-      NEXT_PUBLIC_API_URL:${{vars.NEXT_PUBLIC_API_URL}}
+      NEXT_PUBLIC_API_URL:${{secrets.NEXT_PUBLIC_API_URL}}
       AUTH_SECRET:${{secrets.AUTH_SECRET}}
 
     steps:
