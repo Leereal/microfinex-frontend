@@ -13,6 +13,10 @@ export default {
         if (validatedFields.success) {
           try {
             const { email, password } = validatedFields.data;
+            console.log(
+              "process.env.NEXT_PUBLIC_API_URL : ",
+              process.env.NEXT_PUBLIC_API_URL
+            );
             const response = await axios.post(
               process.env.NEXT_PUBLIC_API_URL + "/auth/login/",
               {
@@ -40,6 +44,7 @@ export default {
                 });
               });
             }
+            console.log("Data : ", response.data.user);
             return response.data.user;
           } catch (e: any) {
             console.log(e.response.data);
