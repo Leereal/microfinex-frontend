@@ -20,12 +20,14 @@ jobs:
       AUTH_SECRET: ${{secrets.AUTH_SECRET}}
     steps:
     - uses: actions/checkout@v4
+    - name: Change Ownership
+      run: sudo chown -R $USER:$USER /home/leereal/actions-runner/_work/microfinex-frontend/microfinex-frontend
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: sudo chown -R $USER:$USER /home/leereal/actions-runner/_work/microfinex-frontend/microfinex-frontend
+
     - run: npm ci
     - run: npm run build --if-present
     - name: Change Directory
