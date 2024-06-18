@@ -25,8 +25,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
+    - run: sudo npm ci
+    - run: sudo npm run build --if-present
     - name: Change Directory
       run: cd /home/leereal/actions-runner/_work/microfinex-frontend/microfinex-frontend
     - run: pm2 restart 0
