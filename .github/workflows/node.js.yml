@@ -19,9 +19,6 @@ jobs:
       NEXT_PUBLIC_API_URL: ${{secrets.NEXT_PUBLIC_API_URL}}
       AUTH_SECRET: ${{secrets.AUTH_SECRET}}
     steps:
-    - name: cleanup old checkout 
-      run: chmod +w -R ${GITHUB_WORKSPACE}; rm -rf ${GITHUB_WORKSPACE}/*;
-    - name: Check out repository
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
