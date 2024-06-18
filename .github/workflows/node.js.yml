@@ -19,8 +19,6 @@ jobs:
       NEXT_PUBLIC_API_URL: ${{secrets.NEXT_PUBLIC_API_URL}}
       AUTH_SECRET: ${{secrets.AUTH_SECRET}}
     steps:
-    - name: Pre-job Cleanup
-      run: sudo rm -rf /home/leereal/actions-runner/_work/microfinex-frontend/microfinex-frontend
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
