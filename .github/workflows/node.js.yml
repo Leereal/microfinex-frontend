@@ -19,8 +19,6 @@ jobs:
       NEXT_PUBLIC_API_URL: ${{secrets.NEXT_PUBLIC_API_URL}}
       AUTH_SECRET: ${{secrets.AUTH_SECRET}}
     steps:
-    - name: Change ownership of cache directory
-      run: sudo --non-interactive chown -R $USER:$USER /home/leereal/actions-runner/_work/microfinex-frontend/microfinex-frontend/.next/cache
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
