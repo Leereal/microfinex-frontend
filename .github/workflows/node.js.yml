@@ -5,11 +5,10 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
-    
+    branches: ["main"]
+
 jobs:
   build:
-
     runs-on: self-hosted
 
     strategy:
@@ -19,14 +18,14 @@ jobs:
       NEXT_PUBLIC_API_URL: ${{secrets.NEXT_PUBLIC_API_URL}}
       AUTH_SECRET: ${{secrets.AUTH_SECRET}}
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - name: Change Directory
-      run: cd /home/leereal/actions-runner/_work/microfinex-frontend/microfinex-frontend
-    - run: pm2 restart 0
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - run: sudo npm ci
+      - run: sudo npm run build --if-present
+      - name: Change Directory
+        run: cd /home/leereal/actions-runner/_work/microfinex-frontend/microfinex-frontend
+      - run: pm2 restart 0
