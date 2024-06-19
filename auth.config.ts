@@ -17,6 +17,15 @@ export default {
               "process.env.NEXT_PUBLIC_API_URL : ",
               process.env.NEXT_PUBLIC_API_URL
             );
+            console.log("process.env.AUTH_SECRET : ", process.env.AUTH_SECRET);
+            console.log(
+              "process.env.NEXTAUTH_SECRET : ",
+              process.env.NEXTAUTH_SECRET
+            );
+            console.log(
+              "process.env.NEXTAUTH_URL : ",
+              process.env.NEXTAUTH_URL
+            );
             const response = await axios.post(
               process.env.NEXT_PUBLIC_API_URL + "/auth/login/",
               {
