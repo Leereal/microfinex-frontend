@@ -13,6 +13,8 @@ const { auth } = NextAuth(authConfig);
 export default auth(async (req) => {
   const user: UserType | undefined = await currentUser();
   const userPermissions: String[] = await currentPermissions();
+  console.log("req.auth : ", req.auth);
+  console.log("Req : ", req);
 
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
@@ -26,6 +28,7 @@ export default auth(async (req) => {
   }
   if (isAuthRoute) {
     if (isLoggedIn) {
+      console.log("Is LoggedIn :", isLoggedIn);
       return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
     }
     return NextResponse.next();
