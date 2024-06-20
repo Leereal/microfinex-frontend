@@ -47,7 +47,8 @@ export default {
                   value: cookieValue,
                   httpOnly: httpOnly,
                   maxAge: parseInt(parsedCookie["Max-Age"]),
-                  path: parsedCookie.path,
+                  path: "/",
+                  domain: "www.microfinex.online, api.microfinex.online",
                   expires: new Date(parsedCookie.expires),
                   secure: false,
                 });
