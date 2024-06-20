@@ -41,14 +41,13 @@ export default {
                 const [cookieName, cookieValue] =
                   Object.entries(parsedCookie)[0];
                 const httpOnly = cookie.includes("httponly;");
-
+                console.log(`Cookie: ${cookieName} = ${cookieValue}`);
                 cookies().set({
                   name: cookieName,
                   value: cookieValue,
                   httpOnly: httpOnly,
                   maxAge: parseInt(parsedCookie["Max-Age"]),
-                  path: "/",
-                  domain: "www.microfinex.online, api.microfinex.online",
+                  path: parsedCookie.path,
                   expires: new Date(parsedCookie.expires),
                   secure: false,
                 });
