@@ -38,21 +38,23 @@ export default {
             if (apiCookies && apiCookies.length > 0) {
               apiCookies.forEach((cookie) => {
                 const parsedCookie = parse(cookie);
-                const [cookieName, cookieValue] = Object.entries(parsedCookie)[0];
-                const httpOnly = /httponly/i.test(cookie);
-                const secure = /secure/i.test(cookie);
-                
+                const [cookieName, cookieValue] =
+                  Object.entries(parsedCookie)[0];
+
                 console.log(`Cookie: ${cookieName} = ${cookieValue}`);
-                
+
                 // Setting the cookie
                 cookies().set({
                   name: cookieName,
                   value: cookieValue,
-                  httpOnly,
-                  secure,
+                  httpOnly: true,
+                  secure: true,
+                  sameSite: "none",
                   maxAge: parseInt(parsedCookie["Max-Age"], 10) || undefined,
-                  expires: parsedCookie.expires ? new Date(parsedCookie.expires) : undefined,
-                  path: parsedCookie.Path || '/', // Ensure the path is set
+                  expires: parsedCookie.expires
+                    ? new Date(parsedCookie.expires)
+                    : undefined,
+                  path: parsedCookie.Path || "/", // Ensure the path is set
                   domain: parsedCookie.Domain || undefined, // Ensure the domain is set
                 });
               });
