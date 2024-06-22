@@ -49,9 +49,9 @@ export default {
                 cookies().set({
                   name: cookieName,
                   value: cookieValue,
-                  httpOnly: true,
+                  httpOnly,
                   secure,
-                  sameSite: "none",
+                  // sameSite: "none",
                   maxAge: parseInt(parsedCookie["Max-Age"], 10) || undefined,
                   expires: parsedCookie.expires
                     ? new Date(parsedCookie.expires)
