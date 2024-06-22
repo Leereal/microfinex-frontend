@@ -38,19 +38,22 @@ export default {
             if (apiCookies && apiCookies.length > 0) {
               apiCookies.forEach((cookie) => {
                 const parsedCookie = parse(cookie);
-                const [cookieName, cookieValue] =
-                  Object.entries(parsedCookie)[0];
-                const httpOnly = cookie.includes("httponly;");
+                const [cookieName, cookieValue] = Object.entries(parsedCookie)[0];
+                const httpOnly = /httponly/i.test(cookie);
+                const secure = /secure/i.test(cookie);
+                
                 console.log(`Cookie: ${cookieName} = ${cookieValue}`);
+                
+                // Setting the cookie
                 cookies().set({
                   name: cookieName,
                   value: cookieValue,
-                  httpOnly: httpOnly,
-                  maxAge: parseInt(parsedCookie["Max-Age"]),
-                  path: "/",
-                  domain: "www.microfinex.online, api.microfinex.online",
-                  expires: new Date(parsedCookie.expires),
-                  secure: false,
+                  httpOnly,
+                  secure,
+                  maxAge: parseInt(parsedCookie["Max-Age"], 10) || undefined,
+                  expires: parsedCookie.expires ? new Date(parsedCookie.expires) : undefined,
+                  path: parsedCookie.Path || '/', // Ensure the path is set
+                  domain: parsedCookie.Domain || undefined, // Ensure the domain is set
                 });
               });
             }
