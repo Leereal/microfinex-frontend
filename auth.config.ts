@@ -40,6 +40,8 @@ export default {
                 const parsedCookie = parse(cookie);
                 const [cookieName, cookieValue] =
                   Object.entries(parsedCookie)[0];
+                const httpOnly = /httponly/i.test(cookie);
+                const secure = /secure/i.test(cookie);
 
                 console.log(`Cookie: ${cookieName} = ${cookieValue}`);
 
@@ -48,8 +50,8 @@ export default {
                   name: cookieName,
                   value: cookieValue,
                   httpOnly: true,
-                  secure: true,
-                  // sameSite: "none",
+                  secure,
+                  sameSite: "none",
                   maxAge: parseInt(parsedCookie["Max-Age"], 10) || undefined,
                   expires: parsedCookie.expires
                     ? new Date(parsedCookie.expires)
