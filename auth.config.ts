@@ -49,7 +49,7 @@ export default {
                   value: cookieValue,
                   httpOnly: true,
                   secure: true,
-                  sameSite: "none",
+                  // sameSite: "none",
                   maxAge: parseInt(parsedCookie["Max-Age"], 10) || undefined,
                   expires: parsedCookie.expires
                     ? new Date(parsedCookie.expires)
