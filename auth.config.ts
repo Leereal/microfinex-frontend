@@ -13,19 +13,7 @@ export default {
         if (validatedFields.success) {
           try {
             const { email, password } = validatedFields.data;
-            console.log(
-              "process.env.NEXT_PUBLIC_API_URL : ",
-              process.env.NEXT_PUBLIC_API_URL
-            );
-            console.log("process.env.AUTH_SECRET : ", process.env.AUTH_SECRET);
-            console.log(
-              "process.env.NEXTAUTH_SECRET : ",
-              process.env.NEXTAUTH_SECRET
-            );
-            console.log(
-              "process.env.NEXTAUTH_URL : ",
-              process.env.NEXTAUTH_URL
-            );
+
             const response = await axios.post(
               process.env.NEXT_PUBLIC_API_URL + "/auth/login/",
               {
@@ -43,14 +31,13 @@ export default {
                 const httpOnly = /httponly/i.test(cookie);
                 const secure = /secure/i.test(cookie);
 
-                console.log(`Cookie: ${cookieName} = ${cookieValue}`);
-
                 // Setting the cookie
                 cookies().set({
                   name: cookieName,
                   value: cookieValue,
                   httpOnly,
-                  secure,
+                  secure: true,
+                  sameSite: "none",
                   maxAge: parseInt(parsedCookie["Max-Age"], 10) || undefined,
                   expires: parsedCookie.expires
                     ? new Date(parsedCookie.expires)
@@ -60,7 +47,6 @@ export default {
                 });
               });
             }
-            console.log("Data : ", response.data.user);
             return response.data.user;
           } catch (e: any) {
             console.log(e.response.data);

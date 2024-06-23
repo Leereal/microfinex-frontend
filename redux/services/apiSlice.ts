@@ -21,7 +21,6 @@ const baseQueryWithReauth: BaseQueryFn<
 > = async (args, api, extraOptions) => {
   await mutex.waitForUnlock();
   let result = await baseQuery(args, api, extraOptions);
-  console.log("result : ", result);
 
   if (result.error && result.error.status === 401) {
     if (!mutex.isLocked()) {
@@ -35,19 +34,15 @@ const baseQueryWithReauth: BaseQueryFn<
           api,
           extraOptions
         );
-        console.log("Refresh result => ", refreshResult.data);
         if (refreshResult.data) {
           //If login successful, set the auth state to true here
-          // api.dispatch(setAuth());
+          api.dispatch(setAuth());
 
-          // console.log("Performing reauth due to 401 error");
           result = await baseQuery(args, api, extraOptions);
         } else {
-          console.log("refreshResult : ", refreshResult);
           //if not successful, logout and redirect to login page
-          // console.log("Performing logout due to 401 error");
-          // api.dispatch(logout());
-          // signOut();
+          api.dispatch(logout());
+          signOut();
         }
       } finally {
         release();
