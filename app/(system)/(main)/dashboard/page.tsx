@@ -1,17 +1,17 @@
 "use client";
-// import { Button } from "primereact/button";
-// import { Chart } from "primereact/chart";
-// import { Column } from "primereact/column";
-// import { DataTable } from "primereact/datatable";
+import { Button } from "primereact/button";
+import { Chart } from "primereact/chart";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
 import { Menu } from "primereact/menu";
 import React, { useContext, useEffect, useRef, useState } from "react";
-// import Link from "next/link";
+import Link from "next/link";
 import { Demo } from "@/types";
 import { ChartData, ChartOptions } from "chart.js";
 import { LayoutContext } from "@/layout/context/layoutcontext";
 import { ProductService } from "@/demo/service/ProductService";
 import { PermissionCheck } from "@/components/auth/PermissionCheck";
-// import { useGetDashboardQuery } from "@/redux/features/dashboardApiSlice";
+import { useGetDashboardQuery } from "@/redux/features/dashboardApiSlice";
 
 const lineData: ChartData = {
   labels: ["January", "February", "March", "April", "May", "June", "July"],
@@ -41,7 +41,7 @@ const Dashboard = () => {
   const menu2 = useRef<Menu>(null);
   const [lineOptions, setLineOptions] = useState<ChartOptions>({});
   const { layoutConfig } = useContext(LayoutContext);
-  // const { data: dashboard, isError, isLoading } = useGetDashboardQuery();
+  const { data: dashboard, isError, isLoading } = useGetDashboardQuery();
 
   const applyLightTheme = () => {
     const lineOptions: ChartOptions = {
@@ -111,8 +111,6 @@ const Dashboard = () => {
     ProductService.getProductsSmall().then((data) => setProducts(data));
   }, []);
 
-  // console.log("Dashboard data", dashboard);
-
   useEffect(() => {
     if (layoutConfig.colorScheme === "light") {
       applyLightTheme();
@@ -136,7 +134,7 @@ const Dashboard = () => {
             <div>
               <span className="block text-500 font-medium mb-3">Clients</span>
               <div className="text-900 font-medium text-xl">
-                {/* {dashboard?.total_clients} */}
+                {dashboard?.total_clients}
               </div>
             </div>
             <PermissionCheck allowedPermissions={["view_user"]}>
@@ -149,7 +147,7 @@ const Dashboard = () => {
             </PermissionCheck>
           </div>
           <span className="text-green-500 font-medium">
-            {/* {dashboard?.new_clients_this_week} new{" "} */}
+            {dashboard?.new_clients_this_week} new{" "}
           </span>
           <span className="text-500">since last visit</span>
         </div>
@@ -163,7 +161,7 @@ const Dashboard = () => {
                   Disbursements
                 </span>
                 <div className="text-900 font-medium text-xl">
-                  {/* ${dashboard?.total_disbursements_amount} */}
+                  ${dashboard?.total_disbursements_amount}
                 </div>
               </div>
               <div
@@ -174,7 +172,7 @@ const Dashboard = () => {
               </div>
             </div>
             <span className="text-green-500 font-medium">
-              {/* %{dashboard?.percentage_increase_disbursements}+{" "} */}
+              %{dashboard?.percentage_increase_disbursements}+{" "}
             </span>
             <span className="text-500">since last week</span>
           </div>
@@ -186,7 +184,7 @@ const Dashboard = () => {
             <div>
               <span className="block text-500 font-medium mb-3">Payments</span>
               <div className="text-900 font-medium text-xl">
-                {/* ${dashboard?.total_payments_amount} */}
+                ${dashboard?.total_payments_amount}
               </div>
             </div>
             <div
@@ -197,7 +195,7 @@ const Dashboard = () => {
             </div>
           </div>
           <span className="text-green-500 font-medium">
-            {/* {dashboard?.total_payments}{" "} */}
+            {dashboard?.total_payments}{" "}
           </span>
           <span className="text-500">transactions this week</span>
         </div>
@@ -210,7 +208,7 @@ const Dashboard = () => {
                 Total Loans
               </span>
               <div className="text-900 font-medium text-xl">
-                {/* {dashboard?.total_loans_processed} Processed */}
+                {dashboard?.total_loans_processed} Processed
               </div>
             </div>
             <div
@@ -221,12 +219,12 @@ const Dashboard = () => {
             </div>
           </div>
           <span className="text-red-500 font-medium">
-            {/* {dashboard?.rejected_loans_count}{" "} */}
+            {dashboard?.rejected_loans_count}{" "}
           </span>
           <span className="text-500">rejected</span>
         </div>
       </div>
-      {/* 
+
       <div className="col-12 xl:col-8">
         <div className="card">
           <h5>Recent Loans</h5>
@@ -424,7 +422,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };
