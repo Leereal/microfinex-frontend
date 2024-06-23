@@ -1,13 +1,6 @@
-"use client";
-import React from "react";
-import Banner from "./_components/Banner";
-
-const HomePage = () => {
-  return (
-    <div>
-      <Banner />
-    </div>
-  );
+import { redirect } from "next/navigation";
+const Home = () => {
+  redirect("/auth/login");
 };
 
-export default HomePage;
+export default Home;
