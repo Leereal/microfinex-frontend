@@ -49,7 +49,6 @@ export default {
             }
             return response.data.user;
           } catch (e: any) {
-            console.log(e.response.data);
             throw Error(e.response);
           }
         }

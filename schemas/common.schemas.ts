@@ -1,19 +1,5 @@
 import { z } from "zod";
 
-export const BranchSchema: z.ZodType<BranchType> = z.object({
-  id: z.number().optional(),
-  name: z.string().min(2, {
-    message: "Name is required and should be at least 2 characters long",
-  }),
-  address: z.string().optional(),
-  email: z.union([
-    z.literal(""),
-    z.string().email({ message: "Invalid email address" }),
-  ]),
-  phone: z.string().optional(),
-  is_active: z.boolean().optional(),
-});
-
 export const UploadFileTypeSchema: z.ZodType<UploadFileType> = z.object({
   file: z.any(),
   document_type: z.number(),

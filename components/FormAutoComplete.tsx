@@ -21,7 +21,6 @@ const FormAutocomplete: React.FC<FormAutocompleteProps> = ({
   clients,
 }) => {
   const [filteredClients, setFilteredClients] = useState<ClientType[]>([]);
-  console.log("Clients in Modal: ", clients);
 
   const search = (event: { query: string }) => {
     let _filteredClients;

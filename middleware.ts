@@ -97,4 +97,8 @@ const paths = [
     path: "/users",
     permission: ["view_user"],
   },
+  {
+    path: "/branches",
+    permission: ["view_branch"],
+  },
 ];

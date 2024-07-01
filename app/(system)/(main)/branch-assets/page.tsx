@@ -2,15 +2,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Toast } from "primereact/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { BranchSchema } from "@/schemas/common.schemas";
 import { useForm } from "react-hook-form";
-import { branchDefaultValues } from "@/constants/default.values";
 import BranchAssetList from "./_components/BranchAssetList";
 import BranchAssetModal from "./_components/BranchAssetModal";
 import {
   useCreateBranchAssetMutation,
   useGetBranchAssetsQuery,
 } from "@/redux/features/branchAssetApiSlice";
+import { BranchSchema, branchDefaultValues } from "@/schemas/branch.schemas";
 
 const BranchesPage = () => {
   const toast = useRef<Toast | null>(null);
@@ -42,7 +41,6 @@ const BranchesPage = () => {
   };
 
   const showError = (errorMessage: string) => {
-    console.log(toast.current);
     if (toast.current) {
       toast.current.show({
         severity: "error",

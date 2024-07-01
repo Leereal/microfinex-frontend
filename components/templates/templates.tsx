@@ -1,3 +1,4 @@
+import { BranchType } from "@/schemas/branch.schemas";
 import React from "react";
 
 export const branchActiveTemplate = (rowData: BranchType) => {
