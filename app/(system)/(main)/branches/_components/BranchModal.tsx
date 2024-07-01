@@ -62,6 +62,12 @@ const BranchModal = ({
         register={register}
         error={errors.address}
       />
+      <div>
+        {" "}
+        {errors && errors.root && (
+          <small className="p-error">{errors?.root?.message}</small>
+        )}
+      </div>
       <div className="p-dialog-footer pb-0">
         <Button label="Cancel" icon="pi pi-times" text onClick={onHide} />
         <Button

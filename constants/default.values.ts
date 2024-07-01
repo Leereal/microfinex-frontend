@@ -1,11 +1,14 @@
-export const branchDefaultValues: BranchType = {
-  id: undefined,
-  name: "",
-  address: "",
-  email: "",
-  phone: "",
-  is_active: true,
-};
+import { BranchType } from "@/schemas/branch.schemas";
+
+//DELETE THIS
+// export const branchDefaultValues: BranchType = {
+//   id: undefined,
+//   name: "",
+//   address: "",
+//   email: "",
+//   phone: "",
+//   is_active: true,
+// };
 
 export const disbursementDefaultValues: DisbursementType = {
   client: 0,

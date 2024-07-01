@@ -7,6 +7,7 @@ import { MenuProvider } from "./context/menucontext";
 import Link from "next/link";
 import { AppMenuItem } from "@/types";
 import { useCheckPermissions } from "@/hooks/use-check-permission";
+import { PermissionCheck } from "@/components/auth/PermissionCheck";
 
 const AppMenu = () => {
   const { layoutConfig } = useContext(LayoutContext);
@@ -74,7 +75,7 @@ const AppMenu = () => {
           label: "All Branches",
           icon: "pi pi-fw pi-id-card",
           to: "/branches",
-          permission: [],
+          permission: ["view_branch"],
         },
         {
           label: "Branch Assets",
@@ -110,16 +111,14 @@ const AppMenu = () => {
       <ul className="layout-menu">
         {model.map((item, i) => {
           // Check if the item has permission specified and if the user has that permission
-          const hasPermission =
-            !item.permission ||
-            useCheckPermissions({ allowedPermissions: item.permission });
-          return hasPermission ? (
-            !item?.seperator ? (
+
+          return !item?.seperator ? (
+            <PermissionCheck allowedPermissions={item.permission}>
               <AppMenuitem item={item} root={true} index={i} key={item.label} />
-            ) : (
-              <li className="menu-separator"></li>
-            )
-          ) : null;
+            </PermissionCheck>
+          ) : (
+            <li className="menu-separator"></li>
+          );
         })}
 
         <Link

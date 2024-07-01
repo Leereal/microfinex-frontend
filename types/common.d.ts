@@ -1,3 +1,5 @@
+import { BranchType } from "@/schemas/branch.schemas";
+
 interface AuditChangeType extends TimeStampedModel {
   user: User | null;
   model_name: string;
@@ -36,14 +38,14 @@ interface BranchProductType {
   created_by: UserType;
 }
 
-interface BranchType {
-  id?: number | null | undefined;
-  name: string;
-  address?: string | null;
-  email?: string | null;
-  phone?: string | null;
-  is_active?: boolean;
-}
+// interface BranchType {
+//   id?: number | null | undefined;
+//   name: string;
+//   address?: string | null;
+//   email?: string | null;
+//   phone?: string | null;
+//   is_active?: boolean;
+// }
 
 interface ClientType {
   id: number;

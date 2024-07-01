@@ -35,8 +35,6 @@ const LoanModal = ({
 }: LoanModalProps) => {
   const [filteredClients, setFilteredClients] = useState<ClientType[]>([]);
   const search = (event: { query: string }) => {
-    console.log("Event : ", event);
-
     let _filteredClients;
 
     if (!event.query.trim().length) {

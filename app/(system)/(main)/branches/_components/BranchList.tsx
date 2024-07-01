@@ -3,13 +3,16 @@ import React from "react";
 import { Toolbar } from "primereact/toolbar";
 import { Button } from "primereact/button";
 import BranchTable from "./BranchTable";
+import { PermissionCheck } from "@/components/auth/PermissionCheck";
 
 const BranchList = ({
   branches,
   onCreate,
+  onEdit,
 }: {
   branches: any;
-  onCreate: any;
+  onCreate: () => void;
+  onEdit: any;
 }) => {
   const toolbarLeftTemplate = () => (
     <Button
@@ -23,8 +26,11 @@ const BranchList = ({
   return (
     <div className="card">
       <h3 className="font-bold text-primary-700">Branch List</h3>
-      <Toolbar start={toolbarLeftTemplate} />
-      <BranchTable branches={branches} />
+      <PermissionCheck allowedPermissions={["add_branch"]}>
+        <Toolbar start={toolbarLeftTemplate} />
+      </PermissionCheck>
+
+      <BranchTable branches={branches} onEdit={onEdit} />
     </div>
   );
 };
