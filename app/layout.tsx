@@ -8,6 +8,7 @@ import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primereact/resources/primereact.css";
 import "primeicons/primeicons.css";
 import "../styles/layout/layout.scss";
+import "../styles/custom/custom.scss";
 
 const nunito = Nunito({ subsets: ["latin"] });
 

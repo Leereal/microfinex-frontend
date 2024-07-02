@@ -4,14 +4,14 @@ import { getDefaultsForSchema } from "zod-defaults";
 //This is to avoid defining the BranchSchema twice
 
 export const BranchSchema = z.object({
-  id: z.number().optional(),
+  id: z.number().optional().nullable().default(null),
   name: z
     .string()
     .min(2, {
       message: "Name is required and should be at least 2 characters long",
     })
     .default(""),
-  address: z.string().optional().default("").default(""),
+  address: z.string().optional().default(""),
   email: z
     .union([
       z.literal(""),
