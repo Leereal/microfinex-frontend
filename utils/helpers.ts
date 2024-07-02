@@ -25,14 +25,23 @@
 //   }
 // };
 
-export const formatDate = (value: Date) => {
-  return value;
+export const formatDate = (value: string | Date | null) => {
+  if (!value) {
+    return null;
+  }
 
-  // return value.toLocaleDateString("en-US", {
-  //   day: "2-digit",
-  //   month: "2-digit",
-  //   year: "numeric",
-  // });
+  const date = typeof value === "string" ? new Date(value) : value;
+
+  if (isNaN(date.getTime())) {
+    console.error("Invalid date:", value);
+    return null;
+  }
+
+  return date.toLocaleDateString("en-ZW", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 };
 
 export const formatCurrency = (value: number) => {

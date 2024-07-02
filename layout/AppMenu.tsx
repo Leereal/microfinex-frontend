@@ -42,12 +42,12 @@ const AppMenu = () => {
         {
           label: "All Clients",
           icon: "pi pi-fw pi-users",
-          to: "/all-clients",
+          to: "/clients",
         },
         {
           label: "Add Client",
           icon: "pi pi-fw pi-user-plus",
-          to: "/all-clients",
+          to: "/clients",
         },
       ],
     },
@@ -113,11 +113,11 @@ const AppMenu = () => {
           // Check if the item has permission specified and if the user has that permission
 
           return !item?.seperator ? (
-            <PermissionCheck allowedPermissions={item.permission}>
+            <PermissionCheck allowedPermissions={item.permission} key={i}>
               <AppMenuitem item={item} root={true} index={i} key={item.label} />
             </PermissionCheck>
           ) : (
-            <li className="menu-separator"></li>
+            <li className="menu-separator" key={i}></li>
           );
         })}
 

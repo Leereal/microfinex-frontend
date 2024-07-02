@@ -1,11 +1,10 @@
-// BranchList.js
 import React from "react";
 import { Toolbar } from "primereact/toolbar";
 import { Button } from "primereact/button";
-import BranchTable from "./BranchTable";
 import { PermissionCheck } from "@/components/auth/PermissionCheck";
+import ClientTable from "./ClientTable";
 
-const BranchList = ({
+const ClientList = ({
   onCreate,
   onEdit,
 }: {
@@ -14,7 +13,7 @@ const BranchList = ({
 }) => {
   const toolbarLeftTemplate = () => (
     <Button
-      label="New Branch"
+      label="New Client"
       icon="pi pi-plus"
       style={{ marginRight: ".5em" }}
       onClick={onCreate}
@@ -23,14 +22,13 @@ const BranchList = ({
 
   return (
     <div className="card">
-      <h3 className="font-bold text-primary-700">Branch List</h3>
-      <PermissionCheck allowedPermissions={["add_branch"]}>
+      <h3 className="font-bold text-primary-700">Client List</h3>
+      <PermissionCheck allowedPermissions={["add_client"]}>
         <Toolbar start={toolbarLeftTemplate} />
       </PermissionCheck>
-
-      <BranchTable onEdit={onEdit} />
+      <ClientTable onEdit={onEdit} />
     </div>
   );
 };
 
-export default BranchList;
+export default ClientList;

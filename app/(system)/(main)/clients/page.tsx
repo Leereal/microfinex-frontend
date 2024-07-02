@@ -1,29 +1,29 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  useCreateBranchMutation,
-  useUpdateBranchMutation,
-} from "@/redux/features/branchApiSlice";
+  useCreateClientMutation,
+  useUpdateClientMutation,
+} from "@/redux/features/clientApiSlice"; // Adjust import path for client API slice
 import { Toast } from "primereact/toast";
-import BranchList from "./_components/BranchList";
-import BranchModal from "./_components/BranchModal";
+import ClientList from "./_components/ClientList"; // Adjust component imports as needed
+import ClientModal from "./_components/ClientModal"; // Adjust component imports as needed
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  BranchSchema,
-  BranchType,
-  branchDefaultValues,
-} from "@/schemas/branch.schemas";
-import { useForm } from "react-hook-form";
-// import { branchDefaultValues } from "@/constants/default.values";// We no longer use this since we are suing zod-defaults package
 
-const BranchesPage = () => {
+import { useForm } from "react-hook-form";
+import {
+  ClientSchema,
+  ClientType,
+  clientDefaultValues,
+} from "@/schemas/client.schema";
+
+const ClientsPage = () => {
   const toast = useRef<Toast | null>(null);
-  const [createBranch, { isLoading: isSubmitting }] = useCreateBranchMutation();
-  const [updateBranch] = useUpdateBranchMutation();
+  const [createClient, { isLoading: isSubmitting }] = useCreateClientMutation();
+  const [updateClient] = useUpdateClientMutation();
 
   const [visible, setVisible] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [currentBranch, setCurrentBranch] = useState<BranchType | null>(null);
+  const [currentClient, setCurrentClient] = useState<ClientType | null>(null);
 
   const {
     register,
@@ -32,55 +32,55 @@ const BranchesPage = () => {
     formState: { errors },
     reset,
   } = useForm({
-    resolver: zodResolver(BranchSchema),
-    defaultValues: branchDefaultValues,
+    resolver: zodResolver(ClientSchema),
+    defaultValues: clientDefaultValues,
   });
 
-  const onSubmit = async (data: BranchType) => {
-    if (editMode && currentBranch) {
-      if (currentBranch.id === undefined) {
-        showError("Branch ID is missing. Cannot update branch.");
+  const onSubmit = async (data: ClientType) => {
+    if (editMode && currentClient) {
+      if (!currentClient.id) {
+        showError("Client ID is missing. Cannot update client.");
         return;
       }
-      updateBranch({ id: currentBranch.id, ...data })
+      updateClient({ id: currentClient.id, data })
         .unwrap()
         .then(() => {
-          showSuccess("Branch updated successfully.");
+          showSuccess("Client updated successfully.");
           reset();
           setVisible(false);
           setEditMode(false);
-          setCurrentBranch(null);
+          setCurrentClient(null);
         })
         .catch((error: any) => {
           if (error.data) {
             Object.keys(error.data).forEach((field) => {
-              setError(field as keyof BranchType, {
+              setError(field as keyof ClientType, {
                 type: "manual",
                 message: error.data[field][0],
               });
             });
           } else {
-            showError("Failed to update branch. Please try again.");
+            showError("Failed to update client. Please try again.");
           }
         });
     } else {
-      createBranch(data)
+      createClient(data)
         .unwrap()
         .then(() => {
-          showSuccess("Branch added successfully.");
+          showSuccess("Client added successfully.");
           reset();
           setVisible(false);
         })
         .catch((error: any) => {
           if (error.data) {
             Object.keys(error.data).forEach((field) => {
-              setError(field as keyof BranchType, {
+              setError(field as keyof ClientType, {
                 type: "manual",
                 message: error.data[field][0],
               });
             });
           } else {
-            showError("Failed to create branch. Please try again.");
+            showError("Failed to create client. Please try again.");
           }
         });
     }
@@ -108,16 +108,16 @@ const BranchesPage = () => {
     }
   };
 
-  const onCreateBranch = () => {
-    reset(branchDefaultValues);
+  const onCreateClient = () => {
+    reset(clientDefaultValues);
     setVisible(true);
     setEditMode(false);
-    setCurrentBranch(null);
+    setCurrentClient(null);
   };
 
-  const onEditBranch = (branch: BranchType) => {
-    setCurrentBranch(branch);
-    reset(branch);
+  const onEditClient = (client: ClientType) => {
+    setCurrentClient(client);
+    reset(client);
     setVisible(true);
     setEditMode(true);
   };
@@ -126,16 +126,16 @@ const BranchesPage = () => {
     reset();
     setVisible(false);
     setEditMode(false);
-    setCurrentBranch(null);
+    setCurrentClient(null);
   };
 
   return (
     <div className="grid">
       <Toast ref={toast} />
       <div className="col-12">
-        <BranchList onCreate={onCreateBranch} onEdit={onEditBranch} />
+        <ClientList onCreate={onCreateClient} onEdit={onEditClient} />
       </div>
-      <BranchModal
+      <ClientModal
         visible={visible}
         onHide={onHideModal}
         onSubmit={handleSubmit(onSubmit)}
@@ -147,4 +147,4 @@ const BranchesPage = () => {
   );
 };
 
-export default BranchesPage;
+export default ClientsPage;
