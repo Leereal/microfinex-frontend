@@ -68,6 +68,9 @@ export const apiSlice = createApi({
     "BranchAsset",
     "Disbursement",
     "Client",
+    "GlobalSettings",
+    "BranchSettings",
+    "GroupProduct",
   ],
   endpoints: (builder) => ({}),
 });

@@ -1,52 +1,40 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { Toast } from "primereact/toast";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import {
-  useDisburseLoanMutation,
-  useGetLoansQuery,
-} from "@/redux/features/loanApiSlice";
-import { DisbursementTypeSchema } from "@/schemas/common.schemas";
-import { disbursementDefaultValues } from "@/constants/default.values";
+import { useGetLoansQuery } from "@/redux/features/loanApiSlice";
 import LoanList from "./_components/LoanList";
 import LoanModal from "./_components/LoanModal";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { useGetCurrenciesQuery } from "@/redux/features/currencyApiSlice";
 import { useGetClientsQuery } from "@/redux/features/clientApiSlice";
-import { DevTool } from "@hookform/devtools";
+import { useGetGlobalSettingsQuery } from "@/redux/features/globalSettingsApiSlice";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { useGetBranchSettingsQuery } from "@/redux/features/branchSettingsApiSlice";
+import { useGetBranchProductsQuery } from "@/redux/features/branchProductApiSlice";
 
 const LoansPage = () => {
-  const toast = useRef<Toast | null>(null);
-  const { data: loans, isError, isLoading } = useGetLoansQuery();
-  const { data: currencies } = useGetCurrenciesQuery();
-  const { data: clients } = useGetClientsQuery();
+  const toast = useRef<Toast>(null);
+  const user = useCurrentUser();
   const [visible, setVisible] = useState(false);
-
   const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-    control,
-  } = useForm({
-    resolver: zodResolver(DisbursementTypeSchema),
-    defaultValues: disbursementDefaultValues,
-  });
+    data: currencies,
+    isError: isCurrenciesError,
+    isLoading: isCurrenciesLoading,
+  } = useGetCurrenciesQuery();
 
-  const [disburseLoan] = useDisburseLoanMutation();
+  const { data: globalSettings, isLoading: globalSettingsLoading } =
+    useGetGlobalSettingsQuery();
 
-  const onSubmit = async (data: DisbursementType) => {
-    disburseLoan(data)
-      .unwrap()
-      .then(() => {
-        showSuccess();
-        reset();
-      })
-      .catch(() => {
-        showError("Failed to disburse loan. Please try again.");
-      });
-  };
+  const { data: branchSettings, isLoading: branchSettingsLoading } =
+    useGetBranchSettingsQuery(user!.active_branch!);
+
+  const { data: branchProducts, isLoading: branchProductsLoading } =
+    useGetBranchProductsQuery();
+  const {
+    data: clients,
+    isError: isClientsError,
+    isLoading: isClientsLoading,
+  } = useGetClientsQuery();
 
   const showError = (errorMessage: string) => {
     if (toast.current) {
@@ -75,39 +63,33 @@ const LoansPage = () => {
   };
 
   const onHideModal = () => {
-    reset();
     setVisible(false);
   };
-  useEffect(() => {
-    if (isSubmitting) {
-      setVisible(false);
-    }
-    if (isError) {
-      showError("Error fetching branches");
-    }
-  }, [isError, isSubmitting]);
 
   return (
     <div className="grid">
       <Toast ref={toast} />
       <div className="col-12">
-        {isLoading && <ProgressSpinner />}
-        {loans && <LoanList loans={loans} onCreate={onDisburseLoan} />}
+        {<LoanList onCreate={onDisburseLoan} showError={showError} />}
       </div>
-      {clients && currencies && (
-        <LoanModal
-          visible={visible}
-          onHide={onHideModal}
-          onSubmit={handleSubmit(onSubmit)}
-          register={register}
-          errors={errors}
-          isSubmitting={isSubmitting}
-          clients={clients}
-          currencies={currencies}
-          control={control}
-        />
-      )}
-      <DevTool control={control} />
+      {clients &&
+        currencies &&
+        globalSettings &&
+        branchSettings &&
+        branchProducts &&
+        !branchSettingsLoading && (
+          <LoanModal
+            visible={visible}
+            onHide={onHideModal}
+            showSuccess={showSuccess}
+            showError={showError}
+            clients={clients}
+            currencies={currencies}
+            globalSettings={globalSettings}
+            branchSettings={branchSettings}
+            branchProducts={branchProducts}
+          />
+        )}
     </div>
   );
 };

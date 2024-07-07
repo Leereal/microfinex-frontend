@@ -1,17 +1,36 @@
+import {
+  BranchProductResponseSchema,
+  BranchProductRequestSchema,
+} from "@/schemas/branch-product.schemas";
 import { apiSlice } from "../services/apiSlice";
 
 const branchProductApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getBranchProducts: builder.query<BranchProductType[], void>({
+    getAllBranchProducts: builder.query<
+      (typeof BranchProductResponseSchema)[],
+      void
+    >({
+      query: () => "/branch-products/all",
+      providesTags: ["BranchProduct"],
+    }),
+    getBranchProducts: builder.query<
+      (typeof BranchProductResponseSchema)[],
+      void
+    >({
       query: () => "/branch-products/",
       providesTags: ["BranchProduct"],
     }),
-    getBranchProduct: builder.query<BranchProductType, number>({
-      query: (id: number) => `/branch-products/${id}/`,
-      providesTags: ["BranchProduct"],
-    }),
-    createBranchProduct: builder.mutation<void, BranchProductType>({
-      query: (data: BranchProductType) => ({
+    getBranchProduct: builder.query<typeof BranchProductResponseSchema, number>(
+      {
+        query: (id: number) => `/branch-products/${id}/`,
+        providesTags: ["BranchProduct"],
+      }
+    ),
+    createBranchProduct: builder.mutation<
+      void,
+      typeof BranchProductRequestSchema
+    >({
+      query: (data: typeof BranchProductRequestSchema) => ({
         url: "/branch-products/",
         method: "POST",
         body: data,
@@ -19,7 +38,13 @@ const branchProductApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["BranchProduct"],
     }),
     updateBranchProduct: builder.mutation({
-      query: ({ id, ...data }: { id: number; data: BranchProductType }) => ({
+      query: ({
+        id,
+        ...data
+      }: {
+        id: number;
+        data: typeof BranchProductRequestSchema;
+      }) => ({
         url: `/branch-products/${id}/`,
         method: "PATCH",
         body: data,

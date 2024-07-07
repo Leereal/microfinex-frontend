@@ -4,11 +4,11 @@ import { Button } from "primereact/button";
 import LoanTable from "./LoanTable";
 
 const LoanList = ({
-  loans,
   onCreate,
+  showError,
 }: {
-  loans: LoanType[];
   onCreate: () => void;
+  showError: any;
 }) => {
   const toolbarLeftTemplate = () => (
     <Button
@@ -23,7 +23,7 @@ const LoanList = ({
     <div className="card">
       <h3 className="font-bold text-primary-700">Loans List</h3>
       <Toolbar start={toolbarLeftTemplate} />
-      <LoanTable loans={loans} />
+      <LoanTable showError={showError} />
     </div>
   );
 };

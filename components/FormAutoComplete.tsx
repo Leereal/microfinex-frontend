@@ -1,27 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { AutoComplete } from "primereact/autocomplete";
 import { classNames } from "primereact/utils";
-import { Controller } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
+import { ClientType } from "@/schemas/client.schema";
 
 type FormAutocompleteProps = {
   label: string;
   id: string;
   control: any; // Using 'control' from react-hook-form
-  error?: {
-    message: string;
-  };
+  error?: any;
   clients: ClientType[];
 };
 
 const FormAutocomplete: React.FC<FormAutocompleteProps> = ({
   label,
   id,
-  control, // Destructure control from props
   error,
   clients,
+  control,
 }) => {
   const [filteredClients, setFilteredClients] = useState<ClientType[]>([]);
-
   const search = (event: { query: string }) => {
     let _filteredClients;
 
@@ -30,8 +28,8 @@ const FormAutocomplete: React.FC<FormAutocompleteProps> = ({
     } else {
       _filteredClients = clients.filter((client) => {
         return (
-          client.full_name
-            .toLowerCase()
+          client
+            .full_name!.toLowerCase()
             .startsWith(event.query.toLowerCase()) ||
           client.national_id
             ?.toLowerCase()
@@ -56,11 +54,12 @@ const FormAutocomplete: React.FC<FormAutocompleteProps> = ({
 
   const itemTemplate = (client: ClientType) => {
     return (
-      <div className="flex align-items-center">
-        <div>{client.full_name}</div>
-        <div>
+      <div className="flex align-items-center text-sm font-bold space-x-3">
+        <span>{client.full_name}</span>
+        <span>|</span>
+        <span>
           {client.national_id ? client.national_id : client.passport_number}
-        </div>
+        </span>
       </div>
     );
   };
@@ -71,10 +70,12 @@ const FormAutocomplete: React.FC<FormAutocompleteProps> = ({
       <Controller
         name={id}
         control={control}
-        render={({ field }) => (
+        render={({ field: { onChange, value, ref } }) => (
           <AutoComplete
-            {...field}
             id={id}
+            value={value ? clients.find((client) => client.id === value) : null}
+            onChange={(e) => onChange(e.value.id)}
+            ref={ref}
             className={classNames({ "p-invalid": !!error })}
             suggestions={filteredClients}
             completeMethod={search}
@@ -83,7 +84,7 @@ const FormAutocomplete: React.FC<FormAutocompleteProps> = ({
           />
         )}
       />
-      {error && <small className="p-error">{error?.message}</small>}
+      {error && <small className="p-error">{error.message}</small>}
     </div>
   );
 };

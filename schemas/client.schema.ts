@@ -65,7 +65,7 @@ export const EmployerSchema = z
 
 export const ClientLimitSchema = z.object({
   id: z.number().optional().nullable().default(null),
-  max_loan: z.string(),
+  max_loan: z.number().nullable().default(null),
   credit_score: z.string(),
   currency: z.number(),
 });
@@ -79,7 +79,7 @@ export const ClientSchema = z.object({
   employer: EmployerSchema,
   client_limit: ClientLimitSchema.default({
     id: undefined,
-    max_loan: "",
+    max_loan: null,
     credit_score: "",
     currency: 0,
   }),
@@ -88,6 +88,7 @@ export const ClientSchema = z.object({
   deleted_at: z.string().nullable().default(null),
   first_name: z.string(),
   last_name: z.string(),
+  full_name: z.string().nullable().default(null),
   emails: z.array(z.string()).default([]),
   national_id: z.string().nullable().default(null),
   nationality: z.string().nullable().default(null),
