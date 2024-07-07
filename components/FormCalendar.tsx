@@ -6,9 +6,7 @@ type FormCalendarProps = {
   label: string;
   id: string;
   register: any;
-  error?: {
-    message: string;
-  };
+  error?: any;
   showIcon?: boolean;
 };
 

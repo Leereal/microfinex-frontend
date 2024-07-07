@@ -1,37 +1,41 @@
 import React from "react";
 import { classNames } from "primereact/utils";
 import { InputNumber } from "primereact/inputnumber";
+import { Controller, useFormContext } from "react-hook-form";
 
 type FormInputNumberProps = {
   label: string;
   id: string;
-  register: any; // Assuming register is of any type
-  error?: {
-    message: string;
-  };
+  error?: any;
   showButtons?: boolean;
-  mode?: string;
 };
 
 const FormInputNumber: React.FC<FormInputNumberProps> = ({
   label,
   id,
-  register,
   error,
   showButtons,
-  mode,
-}) => (
-  <div className="field">
-    <label htmlFor={id}>{label}</label>
-    <InputNumber
-      id={id}
-      className={classNames({ "p-invalid": !!error })}
-      {...register(id)} // Spread the register function
-      showButtons={showButtons}
-      mode={mode}
-    />
-    {error && <small className="p-error">{error?.message}</small>}
-  </div>
-);
-
+}) => {
+  const { control } = useFormContext();
+  return (
+    <div className="field">
+      <label htmlFor={id}>{label}</label>
+      <Controller
+        name={id}
+        control={control}
+        render={({ field }) => (
+          <InputNumber
+            id={id}
+            placeholder={label}
+            value={field.value}
+            onValueChange={(e) => field.onChange(e.value)}
+            showButtons={showButtons}
+            className={classNames({ "p-invalid": !!error })}
+          />
+        )}
+      />
+      {error && <small className="p-error">{error?.message}</small>}
+    </div>
+  );
+};
 export default FormInputNumber;

@@ -1,29 +1,4 @@
-// export const formatCurrency = (
-//   amount: number,
-//   settings?: {
-//     decimals?: number;
-//     symbolPosition?: "before" | "after";
-//     currencySymbol?: string;
-//   }
-// ): string => {
-//   // Ensure settings is defined, else default to empty object
-//   const safeSettings = settings || {};
-
-//   // Format the amount with the specified number of decimal places
-//   let formattedAmount = amount.toFixed(safeSettings.decimals ?? 2);
-
-//   // Determine the position of the currency symbol
-//   if (safeSettings.currencySymbol) {
-//     if (safeSettings.symbolPosition === "before") {
-//       return `${safeSettings.currencySymbol}${formattedAmount}`;
-//     } else {
-//       return `${formattedAmount}${safeSettings.currencySymbol}`;
-//     }
-//   } else {
-//     // Default formatting using $ symbol
-//     return `$${formattedAmount}`;
-//   }
-// };
+import { CurrencyType } from "@/schemas/currency.schema";
 
 export const formatDate = (value: string | Date | null) => {
   if (!value) {
@@ -44,10 +19,29 @@ export const formatDate = (value: string | Date | null) => {
   });
 };
 
-export const formatCurrency = (value: number) => {
-  return value;
-  // return value.toLocaleString("en-US", {
-  //   style: "currency",
-  //   currency: "USD",
-  // });
+export const formatCurrency = (
+  value: number,
+  currency?: CurrencyType | null
+): string => {
+  if (!currency || !currency.symbol || !currency.code) {
+    // Default to USD formatting if currency information is missing
+    return value.toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+    });
+  }
+
+  const { symbol, code, position = "before" } = currency;
+
+  // Determine the position of the currency symbol
+  const formattedValue = value.toLocaleString("en-US", {
+    style: "currency",
+    currency: code ?? "USD",
+  });
+
+  if (position === "before") {
+    return `${symbol ?? "$"}${formattedValue}`;
+  } else {
+    return `${formattedValue}${symbol ?? "$"}`;
+  }
 };

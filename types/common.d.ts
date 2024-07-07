@@ -156,7 +156,7 @@ interface LoanType {
   loan_created_by: string;
   approved_by: number | null;
   loan_approved_by: string | null;
-  amount: string;
+  amount: number;
   interest_rate: string | null;
   interest_amount: string | null;
   currency: number;
@@ -164,7 +164,7 @@ interface LoanType {
   disbursement_date: Date;
   start_date: Date;
   expected_repayment_date: Date;
-  status: number;
+  status: string;
   product_name: string;
   branch_product: number | null;
   group_product: number | null;
