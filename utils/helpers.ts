@@ -18,7 +18,6 @@ export const formatDate = (value: string | Date | null) => {
     year: "numeric",
   });
 };
-
 export const formatCurrency = (
   value: number,
   currency?: CurrencyType | null
@@ -33,15 +32,38 @@ export const formatCurrency = (
 
   const { symbol, code, position = "before" } = currency;
 
-  // Determine the position of the currency symbol
+  // Format the number without the currency style
   const formattedValue = value.toLocaleString("en-US", {
-    style: "currency",
-    currency: code ?? "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   });
 
+  // Determine the position of the currency symbol
   if (position === "before") {
     return `${symbol ?? "$"}${formattedValue}`;
   } else {
     return `${formattedValue}${symbol ?? "$"}`;
   }
+};
+
+export const formatDateTime = (value: string | Date | null): string | null => {
+  if (!value) {
+    return null;
+  }
+
+  const date = typeof value === "string" ? new Date(value) : value;
+
+  if (isNaN(date.getTime())) {
+    console.error("Invalid date:", value);
+    return null;
+  }
+
+  return date.toLocaleString("en-ZW", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 };
