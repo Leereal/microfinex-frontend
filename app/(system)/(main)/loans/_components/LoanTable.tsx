@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Tag } from "primereact/tag";
@@ -10,6 +10,9 @@ import { CurrencyType } from "@/schemas/currency.schema";
 import { useGetCurrenciesQuery } from "@/redux/features/currencyApiSlice";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { useGetLoansQuery } from "@/redux/features/loanApiSlice";
+import ReceiptModal from "@/components/templates/receipt";
+import { Menu } from "primereact/menu";
+import { MenuItem } from "primereact/menuitem";
 
 interface Props {
   loans: LoanType[];
@@ -19,7 +22,17 @@ interface Props {
 const LoanTable: React.FC<Props> = ({ showError }: Props) => {
   const [expandedRows, setExpandedRows] = useState<any>({});
   const { data: loans, isError: isLoansError, isLoading } = useGetLoansQuery();
+  const [isReceiptModalVisible, setIsReceiptModalVisible] = useState(false);
+  const [receiptData, setReceiptData] = useState<any>(null);
+  const menuRef = useRef<Menu>(null);
 
+  const menuItems: MenuItem[] = [
+    {
+      label: "Receipt",
+      icon: "pi pi-print",
+      command: () => handlePrintReceipt(),
+    },
+  ];
   const {
     data: currencies,
     isError: isCurrenciesError,
@@ -44,7 +57,11 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
   ];
 
   const [visibleColumns, setVisibleColumns] = useState(defaultColumns);
-
+  const handlePrintReceipt = () => {
+    // Implement your logic to print receipt here
+    console.log("Printing disbursement receipt");
+    setIsReceiptModalVisible(true); // Set this to true to show receipt modal
+  };
   const onColumnToggle = (event: MultiSelectChangeEvent) => {
     setVisibleColumns(event.value);
   };
@@ -109,6 +126,25 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
       : null;
   };
 
+  const menuTemplate = (rowData: LoanType) => {
+    return (
+      <div className="text-center">
+        <Button
+          icon="pi pi-ellipsis-v"
+          onClick={(event) => showMenu(event, rowData)}
+          className="p-button-text p-button-rounded p-button-outlined"
+        />
+        <Menu model={menuItems} popup ref={menuRef} id={`menu_${rowData.id}`} />
+      </div>
+    );
+  };
+
+  const showMenu = (event: React.MouseEvent, rowData: LoanType) => {
+    menuRef.current?.toggle(event);
+    // Optionally, you can set rowData or perform any other action based on the selected row
+    setReceiptData(rowData); // Set receiptData for the receipt modal
+  };
+
   const rowExpansionTemplate = (rowData: LoanType) => (
     <div className="p-3">
       <h5>Transactions for Loan ID {rowData.id}</h5>
@@ -157,60 +193,70 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
     );
   }
   return (
-    <DataTable
-      value={loans}
-      dataKey="id"
-      rowExpansionTemplate={rowExpansionTemplate}
-      expandedRows={expandedRows}
-      onRowToggle={(e) => setExpandedRows(e.data)}
-      header={
-        <div className="flex justify-between items-center">
-          <MultiSelect
-            value={visibleColumns}
-            options={columns}
-            optionLabel="header"
-            onChange={onColumnToggle}
-            className="w-full sm:w-20rem mb-3"
-            display="chip"
-          />
-          <div className="flex gap-2">
-            <Button
-              icon="pi pi-plus"
-              label="Expand All"
-              onClick={expandAll}
-              text
+    <>
+      <DataTable
+        value={loans}
+        dataKey="id"
+        rowExpansionTemplate={rowExpansionTemplate}
+        expandedRows={expandedRows}
+        onRowToggle={(e) => setExpandedRows(e.data)}
+        header={
+          <div className="flex justify-between items-center">
+            <MultiSelect
+              value={visibleColumns}
+              options={columns}
+              optionLabel="header"
+              onChange={onColumnToggle}
+              className="w-full sm:w-20rem mb-3"
+              display="chip"
             />
-            <Button
-              icon="pi pi-minus"
-              label="Collapse All"
-              onClick={collapseAll}
-              text
-            />
+            <div className="flex gap-2">
+              <Button
+                icon="pi pi-plus"
+                label="Expand All"
+                onClick={expandAll}
+                text
+              />
+              <Button
+                icon="pi pi-minus"
+                label="Collapse All"
+                onClick={collapseAll}
+                text
+              />
+            </div>
           </div>
-        </div>
-      }
-    >
-      <Column expander={allowExpansion} style={{ width: "5rem" }} />
-      {visibleColumns.map((col) => (
-        <Column
-          key={col.field}
-          field={col.field}
-          header={col.header}
-          sortable
-          body={
-            col.field === "amount"
-              ? amountBodyTemplate
-              : col.field === "status"
-              ? statusBodyTemplate
-              : col.field === "disbursement_date" ||
-                col.field === "start_date" ||
-                col.field === "expected_repayment_date"
-              ? (rowData: any) => formatDate(rowData[col.field])
-              : undefined
-          }
+        }
+      >
+        <Column expander={allowExpansion} style={{ width: "5rem" }} />
+        {visibleColumns.map((col) => (
+          <Column
+            key={col.field}
+            field={col.field}
+            header={col.header}
+            sortable
+            body={
+              col.field === "amount"
+                ? amountBodyTemplate
+                : col.field === "status"
+                ? statusBodyTemplate
+                : col.field === "disbursement_date" ||
+                  col.field === "start_date" ||
+                  col.field === "expected_repayment_date"
+                ? (rowData: any) => formatDate(rowData[col.field])
+                : undefined
+            }
+          />
+        ))}
+        <Column key="action" header="Actions" body={menuTemplate} />
+      </DataTable>
+      {receiptData && isReceiptModalVisible && (
+        <ReceiptModal
+          visible={isReceiptModalVisible}
+          onHide={() => setIsReceiptModalVisible(false)}
+          receiptData={receiptData}
         />
-      ))}
-    </DataTable>
+      )}
+    </>
   );
 };
 

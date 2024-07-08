@@ -1,4 +1,6 @@
+import { LoanType } from "@/types/common";
 import { apiSlice } from "../services/apiSlice";
+import { DisbursementType } from "@/schemas/disbursement.schema";
 
 const loanApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -9,6 +11,8 @@ const loanApiSlice = apiSlice.injectEndpoints({
 
     getLoans: builder.query<LoanType[], void>({
       query: () => "/loans/",
+      transformResponse: (response: LoanType[]) =>
+        response.sort((a, b) => b.id! - a.id!), // non-null assertion
       providesTags: ["Disbursement"],
     }),
 
@@ -17,13 +21,26 @@ const loanApiSlice = apiSlice.injectEndpoints({
       providesTags: ["Disbursement"],
     }),
 
-    disburseLoan: builder.mutation<void, DisbursementType>({
-      query: (data: DisbursementType) => ({
+    disburseLoan: builder.mutation<void, any>({
+      query: (data: any) => ({
         url: "/loans/",
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Disbursement"],
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        console.log("args : ", args);
+        const { data: result } = await queryFulfilled;
+        console.log("result : ", result);
+        dispatch(
+          loanApiSlice.util.updateQueryData(
+            "getLoans",
+            undefined,
+            (draft: any) => {
+              draft.unshift(result);
+            }
+          )
+        );
+      },
     }),
 
     updateLoan: builder.mutation({

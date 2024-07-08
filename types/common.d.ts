@@ -185,8 +185,8 @@ interface TransactionType {
     | "refund"
     | "bonus"
     | "topup";
-  debit: string | null;
-  credit: string | null;
+  debit: number | string | null;
+  credit: number | string | null;
   currency: string;
   branch: string;
   status: "review" | "pending" | "approved" | "cancelled" | "refunded";
