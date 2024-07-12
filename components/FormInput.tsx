@@ -9,9 +9,8 @@ type FormInputProps = {
   type: string;
   placeholder: string;
   register: any;
-  error?: {
-    message: string;
-  };
+  error?: any
+  className?: string;
 };
 
 const FormInput: React.FC<FormInputProps> = ({
@@ -21,6 +20,7 @@ const FormInput: React.FC<FormInputProps> = ({
   placeholder,
   register,
   error,
+  className
 }) => (
   <div className="field">
     <label htmlFor={id}>{label}</label>
@@ -29,7 +29,7 @@ const FormInput: React.FC<FormInputProps> = ({
       type={type}
       placeholder={placeholder}
       autoFocus
-      className={classNames({ "p-invalid": !!error })}
+      className={classNames({ "p-invalid": !!error },className)}
       {...register(id)}
     />
     {error && <small className="p-error">{error?.message}</small>}
