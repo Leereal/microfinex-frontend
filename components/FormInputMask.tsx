@@ -1,32 +1,29 @@
 import React from "react";
 import { classNames } from "primereact/utils";
-import { Dropdown } from "primereact/dropdown";
+import { InputMask } from "primereact/inputmask";
 import { Controller, useFormContext } from "react-hook-form";
 
-type FormDropdownProps = {
+type FormInputMaskProps = {
   label: string;
   id: string;
-  options: any[];
-  placeholder?: string;
+  mask: string;
+  placeholder: string;
+  slotChar: string;
   register: any;
   error?: any;
-  showClear?: boolean;
-  defaultValue?: any; // Add defaultValue prop
-  className?: string;
 };
 
-const FormDropdown: React.FC<FormDropdownProps> = ({
+const FormInputMask: React.FC<FormInputMaskProps> = ({
   label,
   id,
-  options,
+  mask,
   placeholder,
+  slotChar,
   register,
   error,
-  showClear,
-  defaultValue, // Receive defaultValue from props
-  className
 }) => {
   const { setValue } = useFormContext(); // Access setValue function from useFormContext
+
   return (
     <div className="field">
       <label htmlFor={id}>{label}</label>
@@ -34,17 +31,17 @@ const FormDropdown: React.FC<FormDropdownProps> = ({
         name={id}
         control={register.control} // Assuming register is passed from useForm or FormProvider
         render={({ field }) => (
-          <Dropdown
+          <InputMask
             id={id}
-            value={field.value || defaultValue?.value} // Set the value directly from field.value
+            value={field.value}
             onChange={(e) => {
-              setValue(id, e.value); // Set the selected value to form state
-              field.onChange(e.value); // Update the field value
+              setValue(id, e.target.value); // Set the selected value to form state
+              field.onChange(e.target.value); // Update the field value
             }}
-            options={options}
+            mask={mask}
             placeholder={placeholder}
-            className={classNames({ "p-invalid": !!error }, className)}
-            showClear={showClear}
+            slotChar={slotChar}
+            className={classNames({ "p-invalid": !!error })}
           />
         )}
       />
@@ -53,4 +50,4 @@ const FormDropdown: React.FC<FormDropdownProps> = ({
   );
 };
 
-export default FormDropdown;
+export default FormInputMask;
