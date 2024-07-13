@@ -1,6 +1,7 @@
-import { LoanType } from "@/types/common";
+import { LoanType, TransactionType } from "@/types/common";
 import { apiSlice } from "../services/apiSlice";
 import { DisbursementType } from "@/schemas/disbursement.schema";
+import { RepaymentType } from "@/schemas/repayment.schema";
 
 const loanApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -14,6 +15,13 @@ const loanApiSlice = apiSlice.injectEndpoints({
       transformResponse: (response: LoanType[]) =>
         response.sort((a, b) => b.id! - a.id!), // non-null assertion
       providesTags: ["Disbursement"],
+    }),
+
+    getRepayments: builder.query<TransactionType[], void>({
+      query: () => "/loans/payments/",
+      transformResponse: (response: TransactionType[]) =>
+        response.sort((a, b) => b.id! - a.id!), // non-null assertion
+      providesTags: ["Repayment"],
     }),
 
     getLoan: builder.query<LoanType, number>({
@@ -34,6 +42,26 @@ const loanApiSlice = apiSlice.injectEndpoints({
         dispatch(
           loanApiSlice.util.updateQueryData(
             "getLoans",
+            undefined,
+            (draft: any) => {
+              draft.unshift(result);
+            }
+          )
+        );
+      },
+    }),
+
+    repayLoan: builder.mutation<void, any>({
+      query: (data: RepaymentType) => ({
+        url: "/loans/repayment/",
+        method: "POST",
+        body: data,
+      }),
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        const { data: result } = await queryFulfilled;
+        dispatch(
+          loanApiSlice.util.updateQueryData(
+            "getRepayments",
             undefined,
             (draft: any) => {
               draft.unshift(result);
@@ -68,4 +96,6 @@ export const {
   useDisburseLoanMutation,
   useUpdateLoanMutation,
   useDeleteLoanMutation,
+  useGetRepaymentsQuery,
+  useRepayLoanMutation,
 } = loanApiSlice;

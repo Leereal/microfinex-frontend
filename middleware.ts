@@ -101,4 +101,8 @@ const paths = [
     path: "/branches",
     permission: ["view_branch"],
   },
+  {
+    path: "/loans",
+    permission: ["add_loan", "view_loan","change_loan", "delete_loan"],
+  },
 ];

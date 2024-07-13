@@ -1,17 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 
-import React, { useContext } from "react";
+import React from "react";
 import AppMenuitem from "./AppMenuitem";
-import { LayoutContext } from "./context/layoutcontext";
 import { MenuProvider } from "./context/menucontext";
 import Link from "next/link";
 import { AppMenuItem } from "@/types";
-import { useCheckPermissions } from "@/hooks/use-check-permission";
 import { PermissionCheck } from "@/components/auth/PermissionCheck";
 
 const AppMenu = () => {
-  const { layoutConfig } = useContext(LayoutContext);
-
   const model: AppMenuItem[] = [
     {
       label: "Home",
@@ -26,13 +22,13 @@ const AppMenu = () => {
           label: "Disburse Loan",
           icon: "pi pi-fw pi-wallet",
           to: "/loans",
-          permission: [],
+          permission: ["add_loan", "change_loan", "delete_loan"],
         },
         {
           label: "Make Payment",
           icon: "pi pi-fw pi-credit-card",
-          to: "/",
-          permission: [],
+          to: "/repayments",
+          permission: ["add_loan", "change_loan", "delete_loan"],
         },
       ],
     },
