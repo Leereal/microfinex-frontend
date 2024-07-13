@@ -170,6 +170,7 @@ interface LoanType {
   group_product: number | null;
   transactions: TransactionType[];
   documents: DocumentType[];
+  balance: number;
 }
 
 interface TransactionType {
@@ -190,6 +191,8 @@ interface TransactionType {
   currency: string;
   branch: string;
   status: "review" | "pending" | "approved" | "cancelled" | "refunded";
+  created_at: Date;
+  created_by: string;
 }
 
 interface ContactType {
@@ -283,3 +286,14 @@ interface ClientPayload {
   guarantor?: number | null;
   is_guarantor: boolean;
 }
+
+interface PaymentGatewayType {
+  id: number;                // Unique identifier for the payment gateway
+  name: string;             // Unique name of the payment gateway
+  description?: string | null; // Description of the payment gateway (optional)
+  type: 'online' | 'offline';  // Type of the payment gateway (either "online" or "offline")
+  is_disbursement: boolean;  // Indicates if the gateway can be used for loan disbursements
+  is_repayment: boolean;     // Indicates if the gateway can be used for loan repayments
+  is_active: boolean;        // Indicates if the payment gateway is currently active
+}
+

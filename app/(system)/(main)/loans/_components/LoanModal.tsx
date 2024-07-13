@@ -45,29 +45,29 @@ const LoanModal = ({
 }: LoanModalProps) => {
   const [isReceiptModalVisible, setIsReceiptModalVisible] = useState(false);
   const [receiptData, setReceiptData] = useState<any>(null);
+  const [filteredClients, setFilteredClients] = useState<ClientType[]>(clients);
 
   const [disburseLoan, { isLoading }] = useDisburseLoanMutation();
 
   const defaultCurrency =
-    // branchSettings && branchSettings.currency_code!
-    //   ? currencies.find((currency) => currency.code === branchSettings.currency_code):
     globalSettings && globalSettings.length
       ? currencies.find(
           (currency) => currency.code === globalSettings[0].currency_code
         )
       : undefined;
+
   const form = useForm({
     resolver: zodResolver(DisbursementSchema),
     defaultValues: {
       ...disbursementDefaultValues,
-      currency: defaultCurrency ? defaultCurrency.id : null, // Adjust as per your form structure
+      currency: defaultCurrency ? defaultCurrency.id : null,
     },
   });
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     control,
     watch,
     setError,
@@ -101,23 +101,17 @@ const LoanModal = ({
         );
         return;
       }
-      // Attempt to disburse the loan
       const result = await disburseLoan(data).unwrap();
-
-      // On success
       showSuccess();
       reset();
       onHide();
       setReceiptData(result);
       setIsReceiptModalVisible(true);
     } catch (error: any) {
-      // On failure
       const errorMessage =
         error.message || "Failed to disburse loan. Please try again.";
-
       showError(errorMessage);
 
-      // Handle specific field errors if available
       if (error.data) {
         Object.keys(error.data).forEach((field) => {
           setError(field as keyof DisbursementType, {
@@ -127,6 +121,17 @@ const LoanModal = ({
         });
       }
     }
+  };
+
+  const searchClients = (event: any) => {
+    const query = event.query.toLowerCase();
+    const filtered = clients.filter(
+      (client: ClientType) =>
+        client?.full_name?.toLowerCase().includes(query) ||
+        client.national_id?.toLowerCase().includes(query) ||
+        client.passport_number?.toLowerCase().includes(query)
+    );
+    setFilteredClients(filtered);
   };
 
   return (
@@ -145,9 +150,15 @@ const LoanModal = ({
               label="Client"
               id="client"
               error={errors.client}
-              clients={clients} // Assuming clientList is your list of clients
-              control={control}
+              options={filteredClients.map((client: ClientType) => ({
+                label: `${client.full_name} - ${client.national_id}`,
+                value: client.id!,
+              }))}
+              search={searchClients}
+              field="label"
+              placeholder="Select a Client"
             />
+
             <FormInputNumber
               label="Amount"
               id="amount"
@@ -169,7 +180,7 @@ const LoanModal = ({
                   label: defaultCurrency.name,
                   value: defaultCurrency.id,
                 }
-              } // Pass defaultCurrency's ID as defaultValue
+              }
               showClear
             />
             <FormCalendar

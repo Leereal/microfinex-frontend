@@ -1,10 +1,10 @@
 import React from "react";
 import { Toolbar } from "primereact/toolbar";
 import { Button } from "primereact/button";
-import LoanTable from "./LoanTable";
+import RepaymentTable from "../../repayments/_components/RepaymentTable";
 import { PermissionCheck } from "@/components/auth/PermissionCheck";
 
-const LoanList = ({
+const RepaymentList = ({
   onCreate,
   showError,
 }: {
@@ -13,8 +13,8 @@ const LoanList = ({
 }) => {
   const toolbarLeftTemplate = () => (
     <Button
-      label="Disburse Loan"
-      icon="pi pi-shopping-cart"
+      label="Make Payment"
+      icon="pi pi-money-bill"
       style={{ marginRight: ".5em" }}
       onClick={onCreate}
     />
@@ -22,13 +22,13 @@ const LoanList = ({
 
   return (
     <div className="card">
-      <h3 className="font-bold text-primary-700">Loans List</h3>
+      <h3 className="font-bold text-primary-700">Repayments List</h3>
       <PermissionCheck allowedPermissions={["add_loan"]}>
         <Toolbar start={toolbarLeftTemplate} />
       </PermissionCheck>
-      <LoanTable showError={showError} />
+      <RepaymentTable showError={showError} />
     </div>
   );
 };
 
-export default LoanList;
+export default RepaymentList;

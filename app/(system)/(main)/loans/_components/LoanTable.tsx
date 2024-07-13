@@ -15,7 +15,6 @@ import { Menu } from "primereact/menu";
 import { MenuItem } from "primereact/menuitem";
 
 interface Props {
-  loans: LoanType[];
   showError: any;
 }
 
@@ -44,6 +43,7 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
     { field: "branch_name", header: "Branch Name" },
     { field: "disbursement_date", header: "Disbursement Date" },
     { field: "amount", header: "Amount" },
+    { field: "balance", header: "Balance" },
     { field: "product_name", header: "Product Name" },
     { field: "status", header: "Status" },
   ];
@@ -59,7 +59,6 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
   const [visibleColumns, setVisibleColumns] = useState(defaultColumns);
   const handlePrintReceipt = () => {
     // Implement your logic to print receipt here
-    console.log("Printing disbursement receipt");
     setIsReceiptModalVisible(true); // Set this to true to show receipt modal
   };
   const onColumnToggle = (event: MultiSelectChangeEvent) => {
@@ -235,7 +234,7 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
             header={col.header}
             sortable
             body={
-              col.field === "amount"
+              col.field === "amount" || col.field === "balance"
                 ? amountBodyTemplate
                 : col.field === "status"
                 ? statusBodyTemplate
