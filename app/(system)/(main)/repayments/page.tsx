@@ -1,7 +1,10 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { Toast } from "primereact/toast";
-import { useGetLoansQuery, useGetRepaymentsQuery } from "@/redux/features/loanApiSlice"; // Adjust the import as needed
+import {
+  useGetLoansQuery,
+  useGetRepaymentsQuery,
+} from "@/redux/features/loanApiSlice"; // Adjust the import as needed
 import RepaymentModal from "./_components/RepaymentModal"; // Create this component
 import { ProgressSpinner } from "primereact/progressspinner";
 import { useGetPaymentGatewaysQuery } from "@/redux/features/paymentGatewayApiSlice";
@@ -16,7 +19,8 @@ const RepaymentsPage = () => {
     isError: isRepaymentsError,
   } = useGetRepaymentsQuery();
 
-  const { data: paymentGateways, isLoading: isGatewaysLoading } = useGetPaymentGatewaysQuery();
+  const { data: paymentGateways, isLoading: isGatewaysLoading } =
+    useGetPaymentGatewaysQuery();
   const { data: loans, isLoading: isLoansLoading } = useGetLoansQuery();
 
   const showError = (errorMessage: string) => {
@@ -50,18 +54,12 @@ const RepaymentsPage = () => {
   };
 
   return (
-    <div className="grid">   
+    <div className="grid">
       <Toast ref={toast} />
-       <div className="col-12">
-       {isRepaymentsLoading ? (
-          <ProgressSpinner />
-        ) : isRepaymentsError ? (
-          <div>Error loading repayments</div>
-        ) : (
-          <RepaymentList onCreate={onCreateRepayment} showError={showError} />
-        )}
-      </div>   
- {loans && paymentGateways && !isGatewaysLoading && !isLoansLoading && (
+      <div className="col-12">
+        <RepaymentList onCreate={onCreateRepayment} showError={showError} />
+      </div>
+      {loans && paymentGateways && !isGatewaysLoading && !isLoansLoading && (
         <RepaymentModal
           visible={visible}
           onHide={onHideModal}

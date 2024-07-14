@@ -19,14 +19,15 @@ const UserList = ({
       onClick={onCreate}
     />
   );
-
   return (
     <div className="card">
       <h3 className="font-bold text-primary-700">Users List</h3>
       <Toolbar start={toolbarLeftTemplate} />
-      <div className="grid grid-cols-2 gap-2">
+      <div className="space-y-2 mt-2">
         {users?.map((user) => (
-          <UserItem user={user} key={user.id} />
+          <div className="w-full" key={user.id}>
+            <UserItem user={user} />
+          </div>
         ))}
       </div>
     </div>

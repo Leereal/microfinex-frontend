@@ -27,7 +27,7 @@ const SettingsPage = () => {
 
   const interestTemplate = (rowData: any) => {
     const interestRate = rowData["interest"];
-    return <div>{interestRate.toFixed(2)}%</div>;
+    return <div>{parseFloat(interestRate).toFixed(2)}%</div>;
   };
 
   useEffect(() => {

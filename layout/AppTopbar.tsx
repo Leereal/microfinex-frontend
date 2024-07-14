@@ -152,7 +152,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         >
           {user?.profile_photo ? (
             <Avatar
-              image={`${process.env.BACKEND_URL}${user?.profile_photo}`}
+              image={`${process.env.NEXT_PUBLIC_BACKEND_URL}${user?.profile_photo}`}
               shape="circle"
             />
           ) : (

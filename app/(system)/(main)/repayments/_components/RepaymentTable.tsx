@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { DataTable, DataTableFilterMeta, DataTableFilterMetaData } from "primereact/datatable";
+import {
+  DataTable,
+  DataTableFilterMeta,
+  DataTableFilterMetaData,
+} from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Tag } from "primereact/tag";
 import { Button } from "primereact/button";
@@ -18,7 +22,6 @@ import { InputText } from "primereact/inputtext";
 import { FilterMatchMode } from "primereact/api";
 import PaymentReceipt from "@/components/templates/payment-receipt";
 
-
 const defaultFilters: DataTableFilterMeta = {
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   //Add individual column filters here if needed
@@ -28,7 +31,11 @@ const RepaymentTable: React.FC<{ showError: any }> = ({ showError }) => {
   const [expandedRows, setExpandedRows] = useState<any>({});
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
   const [filters, setFilters] = useState<DataTableFilterMeta>(defaultFilters);
-  const { data: repayments, isError: isRepaymentsError, isLoading } = useGetRepaymentsQuery();
+  const {
+    data: repayments,
+    isError: isRepaymentsError,
+    isLoading,
+  } = useGetRepaymentsQuery();
   const [isReceiptModalVisible, setIsReceiptModalVisible] = useState(false);
   const [receiptData, setReceiptData] = useState<any>(null);
   const menuRef = useRef<Menu>(null);
@@ -58,7 +65,11 @@ const RepaymentTable: React.FC<{ showError: any }> = ({ showError }) => {
   };
 
   const statusBodyTemplate = (rowData: TransactionType) => (
-    <Tag value={rowData.status} severity={getTransactionSeverity(rowData)} className="capitalize" />
+    <Tag
+      value={rowData.status}
+      severity={getTransactionSeverity(rowData)}
+      className="capitalize"
+    />
   );
 
   const getTransactionSeverity = (transaction: TransactionType) => {
@@ -85,7 +96,7 @@ const RepaymentTable: React.FC<{ showError: any }> = ({ showError }) => {
   //     <p>Credit: {rowData.credit}</p>
   //   </div>
   // );
-  
+
   const amountBodyTemplate = (rowData: any, options: any) => {
     const currency =
       currencies?.find(
@@ -112,7 +123,6 @@ const RepaymentTable: React.FC<{ showError: any }> = ({ showError }) => {
     setGlobalFilterValue("");
   };
 
-
   const exportColumns = [
     { title: "Date", dataKey: "created_at" },
     { title: "Client Name", dataKey: "client_name" },
@@ -121,21 +131,21 @@ const RepaymentTable: React.FC<{ showError: any }> = ({ showError }) => {
     { title: "Payment Method", dataKey: "payment_gateway" },
     { title: "Status", dataKey: "status" },
   ];
-  
+
   const exportPdf = () => {
     import("jspdf").then((jsPDF) => {
       import("jspdf-autotable").then(() => {
         const doc = new jsPDF.default();
         const headers = exportColumns.map((col) => col.title);
-        const body = repayments?.map((repayment : any) =>
+        const body = repayments?.map((repayment: any) =>
           exportColumns.map((col) => repayment[col.dataKey])
         );
-  
+
         (doc as any).autoTable({
           head: [headers],
           body: body,
         });
-  
+
         doc.save("repayments.pdf");
       });
     });
@@ -143,7 +153,7 @@ const RepaymentTable: React.FC<{ showError: any }> = ({ showError }) => {
   const exportCSV = (selectionOnly: boolean) => {
     dt.current?.exportCSV({ selectionOnly });
   };
-  
+
   const exportExcel = () => {
     import("xlsx").then((xlsx) => {
       const worksheet = xlsx.utils.json_to_sheet(repayments || []);
@@ -175,7 +185,6 @@ const RepaymentTable: React.FC<{ showError: any }> = ({ showError }) => {
     });
   };
 
-  
   const renderHeader = () => {
     return (
       <div className="flex justify-between">
@@ -223,6 +232,9 @@ const RepaymentTable: React.FC<{ showError: any }> = ({ showError }) => {
       showError("Error fetching repayments");
     }
   }, [isRepaymentsError, showError]);
+  useEffect(() => {
+    initFilters();
+  }, []);
 
   if (isLoading) {
     return (
@@ -236,9 +248,6 @@ const RepaymentTable: React.FC<{ showError: any }> = ({ showError }) => {
       </div>
     );
   }
-  useEffect(() => {
-    initFilters();
-  }, []);
 
   return (
     <>
@@ -250,32 +259,70 @@ const RepaymentTable: React.FC<{ showError: any }> = ({ showError }) => {
         // onRowToggle={(e) => setExpandedRows(e.data)}
         header={renderHeader}
         filters={filters}
-          globalFilterFields={[
-            "client_name",
-            "credit",
-            "payment_gateway",
-            "status",         
-          ]}
+        globalFilterFields={[
+          "client_name",
+          "credit",
+          "payment_gateway",
+          "status",
+        ]}
       >
         {/* <Column expander style={{ width: "5rem" }} />     */}
-        <Column field="created_at" header="Date" body={(rowData:TransactionType)=>{
-          return <span>{formatDateTime(rowData.created_at)}</span>
-        }} sortable />
-        <Column field="client_name" header="Client Name" sortable  className="capitalize"/>
-        <Column field="description" header="Description" sortable  className="capitalize"/>   
-        <Column field="credit" header="Credit" sortable body={amountBodyTemplate} /> 
-        <Column field="payment_gateway" header="Payment Method" sortable  className="capitalize"/>
-        <Column field="status" header="Status" body={statusBodyTemplate} sortable />
-        <Column header="Actions" body={(rowData) => (
-          <div className="text-center">
-            <Button
-              icon="pi pi-ellipsis-v"
-              onClick={(event) => showMenu(event, rowData)}
-              className="p-button-text p-button-rounded p-button-outlined"
-            />
-            <Menu model={menuItems} popup ref={menuRef} id={`menu_${rowData.id}`} />
-          </div>
-        )} />
+        <Column
+          field="created_at"
+          header="Date"
+          body={(rowData: TransactionType) => {
+            return <span>{formatDateTime(rowData.created_at)}</span>;
+          }}
+          sortable
+        />
+        <Column
+          field="client_name"
+          header="Client Name"
+          sortable
+          className="capitalize"
+        />
+        <Column
+          field="description"
+          header="Description"
+          sortable
+          className="capitalize"
+        />
+        <Column
+          field="credit"
+          header="Credit"
+          sortable
+          body={amountBodyTemplate}
+        />
+        <Column
+          field="payment_gateway"
+          header="Payment Method"
+          sortable
+          className="capitalize"
+        />
+        <Column
+          field="status"
+          header="Status"
+          body={statusBodyTemplate}
+          sortable
+        />
+        <Column
+          header="Actions"
+          body={(rowData) => (
+            <div className="text-center">
+              <Button
+                icon="pi pi-ellipsis-v"
+                onClick={(event) => showMenu(event, rowData)}
+                className="p-button-text p-button-rounded p-button-outlined"
+              />
+              <Menu
+                model={menuItems}
+                popup
+                ref={menuRef}
+                id={`menu_${rowData.id}`}
+              />
+            </div>
+          )}
+        />
       </DataTable>
       {receiptData && isReceiptModalVisible && (
         <PaymentReceipt
