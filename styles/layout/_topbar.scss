@@ -21,10 +21,10 @@
         width: 300px;
         border-radius: 12px;
 
-        img {
-            height: 2.5rem;
-            margin-right: .5rem;
-        }
+        // img {
+        //     height: 2.5rem;
+        //     margin-right: .5rem;
+        // }
 
         &:focus {
             @include focused();

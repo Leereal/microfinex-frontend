@@ -13,6 +13,7 @@ import { useGetLoansQuery } from "@/redux/features/loanApiSlice";
 import ReceiptModal from "@/components/templates/receipt";
 import { Menu } from "primereact/menu";
 import { MenuItem } from "primereact/menuitem";
+import { useRouter } from "next/navigation";
 
 interface Props {
   showError: any;
@@ -24,12 +25,18 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
   const [isReceiptModalVisible, setIsReceiptModalVisible] = useState(false);
   const [receiptData, setReceiptData] = useState<any>(null);
   const menuRef = useRef<Menu>(null);
+  const router = useRouter();
 
   const menuItems: MenuItem[] = [
     {
       label: "Receipt",
       icon: "pi pi-print",
       command: () => handlePrintReceipt(),
+    },
+    {
+      label: "View Statement",
+      icon: "pi pi-eye",
+      command: () => handleViewStatement(),
     },
   ];
   const {
@@ -57,9 +64,15 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
   ];
 
   const [visibleColumns, setVisibleColumns] = useState(defaultColumns);
+
   const handlePrintReceipt = () => {
-    // Implement your logic to print receipt here
-    setIsReceiptModalVisible(true); // Set this to true to show receipt modal
+    setIsReceiptModalVisible(true);
+  };
+
+  const handleViewStatement = () => {
+    if (receiptData) {
+      router.push(`/loans/${receiptData.id}`);
+    }
   };
   const onColumnToggle = (event: MultiSelectChangeEvent) => {
     setVisibleColumns(event.value);

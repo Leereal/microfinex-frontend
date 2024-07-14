@@ -32,19 +32,25 @@ export const formatCurrency = (
 
   const { symbol, code, position = "before" } = currency;
 
-  // Format the number without the currency style
-  const formattedValue = value.toLocaleString("en-US", {
+  // Check if the value is negative
+  const isNegative = value < 0;
+  const absoluteValue = Math.abs(value);
+
+  // Format the absolute value without the currency style
+  const formattedValue = absoluteValue.toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
 
   // Determine the position of the currency symbol
-  if (position === "before") {
-    return `${symbol ?? "$"}${formattedValue}`;
-  } else {
-    return `${formattedValue}${symbol ?? "$"}`;
-  }
+  const currencyString = position === "before"
+    ? `${symbol ?? "$"}${formattedValue}`
+    : `${formattedValue}${symbol ?? "$"}`;
+
+  // Prepend the minus sign if the value is negative
+  return isNegative ? `-${currencyString}` : currencyString;
 };
+
 
 export const formatDateTime = (value: string | Date | null): string | null => {
   if (!value) {

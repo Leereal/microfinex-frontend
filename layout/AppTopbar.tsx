@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { Avatar } from "primereact/avatar";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import Logo from "@/components/Logo";
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
   const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar } =
@@ -89,16 +90,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
   return (
     <div className="layout-topbar">
       <Link href="/" className="layout-topbar-logo flex">
-        <img
-          //   src={`/logo-${
-          //     layoutConfig.colorScheme !== "light" ? "white" : "dark"
-          //   }.png`}
-          src="/favicon.png"
-          width="35"
-          height="60"
-          alt="logo"
-        />
-        <span>MICROFINEX</span>
+        <Logo size="md" />
       </Link>
 
       <div className="flex items-center">
