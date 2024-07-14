@@ -6,6 +6,7 @@ import { useGetCurrenciesQuery } from "@/redux/features/currencyApiSlice";
 import { CurrencyType } from "@/schemas/currency.schema";
 import { useGetBranchesQuery } from "@/redux/features/branchApiSlice";
 import { useGetGlobalSettingsQuery } from "@/redux/features/globalSettingsApiSlice";
+import Logo from "../Logo";
 
 interface PaymentReceiptProps {
   visible: boolean;
@@ -37,7 +38,8 @@ const PaymentReceipt: React.FC<PaymentReceiptProps> = ({
   } = useGetGlobalSettingsQuery();
 
   const mediaUrl = globalSettings?.[0]?.company_logo;
-  const branch = branches?.find((branch) => branch.name=== paymentData.branch) || null;
+  const branch =
+    branches?.find((branch) => branch.name === paymentData.branch) || null;
   const printRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = () => {
@@ -79,14 +81,10 @@ const PaymentReceipt: React.FC<PaymentReceiptProps> = ({
     >
       <div ref={printRef} className="shadow-md p-2 mx-auto w-[80mm] bg-white">
         <div id="top" className="border-b border-gray-200 min-h-[100px]">
-          <div
-            className="logo h-[60px] w-[60px] bg-no-repeat bg-contain mx-auto"
-            style={{
-              backgroundImage: `url('${mediaUrl}')`,
-            }}
-          ></div>
           <div className="info text-center">
-            <h2 className="text-lg font-bold">Microfinex Pro</h2>
+            <div className="flex justify-center items-center">
+              <Logo size="xl" disableText />
+            </div>
             <p className="text-sm font-medium">
               <strong>Client:</strong> {paymentData.client_name}
             </p>
@@ -125,7 +123,10 @@ const PaymentReceipt: React.FC<PaymentReceiptProps> = ({
                     {paymentData.description}
                   </td>
                   <td className="tableitem p-1 text-xs">
-                    {currencyFormat(parseFloat((paymentData.credit || 0).toString()), paymentData.currency)}
+                    {currencyFormat(
+                      parseFloat((paymentData.credit || 0).toString()),
+                      paymentData.currency
+                    )}
                   </td>
                 </tr>
               </tbody>
@@ -134,7 +135,10 @@ const PaymentReceipt: React.FC<PaymentReceiptProps> = ({
                   <td></td>
                   <td className="Rate p-1 font-semibold">Total</td>
                   <td className="payment p-1 font-semibold">
-                    {currencyFormat(parseFloat((paymentData.credit || 0).toString()), paymentData.currency)}
+                    {currencyFormat(
+                      parseFloat((paymentData.credit || 0).toString()),
+                      paymentData.currency
+                    )}
                   </td>
                 </tr>
               </tfoot>
@@ -145,7 +149,8 @@ const PaymentReceipt: React.FC<PaymentReceiptProps> = ({
               <strong>Processed by:</strong> {paymentData.created_by}
               <br />
               <br />
-              <strong>Thank you for your payment!</strong> Please keep this receipt for your records.
+              <strong>Thank you for your payment!</strong> Please keep this
+              receipt for your records.
             </p>
           </div>
         </div>

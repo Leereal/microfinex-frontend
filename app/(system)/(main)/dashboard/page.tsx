@@ -14,6 +14,10 @@ import { PermissionCheck } from "@/components/auth/PermissionCheck";
 import { useGetDashboardQuery } from "@/redux/features/dashboardApiSlice";
 import SummaryReport from "./_components/SummaryReport";
 import { Skeleton } from "primereact/skeleton";
+import { useRouter } from "next/navigation";
+import { useGetCurrenciesQuery } from "@/redux/features/currencyApiSlice";
+import { formatCurrency, formatDateTime } from "@/utils/helpers";
+import { CurrencyType } from "@/schemas/currency.schema";
 
 const lineData: ChartData = {
   labels: ["January", "February", "March", "April", "May", "June", "July"],
@@ -55,6 +59,10 @@ const Dashboard = () => {
   const [lineOptions, setLineOptions] = useState<ChartOptions>({});
   const { layoutConfig } = useContext(LayoutContext);
   const { data: dashboard, isError, isLoading } = useGetDashboardQuery();
+  const router = useRouter();
+
+  const { data: currencies, isLoading: isCurrencyLoading } =
+    useGetCurrenciesQuery();
 
   const applyLightTheme = () => {
     const lineOptions: ChartOptions = {
@@ -207,11 +215,12 @@ const Dashboard = () => {
     }
   }, [layoutConfig.colorScheme]);
 
-  const formatCurrency = (value: number) => {
-    return value?.toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
-    });
+  const currencyFormat = (amount: number, code: any) => {
+    const currency =
+      currencies?.find(
+        (curr: CurrencyType) => curr.id === code || curr.code === code
+      ) || null;
+    return amount ? formatCurrency(amount, currency) : null;
   };
 
   if (isLoading) {
@@ -225,7 +234,12 @@ const Dashboard = () => {
   if (!dashboard) {
     return <div>No dashboard data available</div>;
   }
-
+  const handleViewStatement = (rowData: any) => {
+    console.log(rowData);
+    if (rowData.id) {
+      router.push(`/loans/${rowData.id}`);
+    }
+  };
   return (
     <div className="grid">
       <CardItem
@@ -270,6 +284,7 @@ const Dashboard = () => {
             <Column
               field="disbursement_date"
               header="Date Disbursed"
+              body={(data) => formatDateTime(data.disbursement_date)}
               sortable
             />
             <Column field="client_full_name" header="Client Name" sortable />
@@ -277,14 +292,18 @@ const Dashboard = () => {
               field="amount"
               header="Amount Disbursed"
               sortable
-              body={(data) => formatCurrency(data.amount)}
+              body={(data) => currencyFormat(data.amount, data.currency)}
             />
             <Column field="loan_created_by" header="Disbursed By" sortable />
             <Column
               header="View"
-              body={() => (
+              body={(rowData: any) => (
                 <>
-                  <Button icon="pi pi-eye" text />
+                  <Button
+                    icon="pi pi-eye"
+                    onClick={() => handleViewStatement(rowData)}
+                    text
+                  />
                 </>
               )}
             />

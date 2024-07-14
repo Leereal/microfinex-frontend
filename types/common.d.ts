@@ -157,8 +157,8 @@ interface LoanType {
   approved_by: number | null;
   loan_approved_by: string | null;
   amount: number;
-  interest_rate: string | null;
-  interest_amount: string | null;
+  interest_rate: number | null;
+  interest_amount: number | null;
   currency: number;
   loan_application: number | null;
   disbursement_date: Date;

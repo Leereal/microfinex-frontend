@@ -5,9 +5,7 @@ import { formatCurrency, formatDateTime } from "@/utils/helpers";
 import { useGetCurrenciesQuery } from "@/redux/features/currencyApiSlice";
 import { CurrencyType } from "@/schemas/currency.schema";
 import { useGetBranchesQuery } from "@/redux/features/branchApiSlice";
-import Image from "next/image";
-import { classNames } from "primereact/utils";
-import { useGetGlobalSettingsQuery } from "@/redux/features/globalSettingsApiSlice";
+import Logo from "../Logo";
 
 interface ReceiptModalProps {
   visible: boolean;
@@ -20,29 +18,11 @@ const ReceiptModal: React.FC<ReceiptModalProps> = ({
   onHide,
   receiptData,
 }) => {
-  const {
-    data: currencies,
-    isError: isCurrenciesError,
-    isLoading: isCurrenciesLoading,
-  } = useGetCurrenciesQuery();
-
-  const {
-    data: branches,
-    isError: isBranchError,
-    isLoading: isBranchLoading,
-  } = useGetBranchesQuery();
-
-  const {
-    data: globalSettings,
-    isError: isGlobalError,
-    isLoading: isGlobalLoading,
-  } = useGetGlobalSettingsQuery();
-
-  const mediaUrl = globalSettings && globalSettings[0]?.company_logo;
+  const { data: currencies } = useGetCurrenciesQuery();
+  const { data: branches } = useGetBranchesQuery();
 
   const branch =
     branches?.find((branch) => branch.id === receiptData.branch) || null;
-
   const printRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = () => {
@@ -56,7 +36,6 @@ const ReceiptModal: React.FC<ReceiptModalProps> = ({
     }
   };
 
-  // Calculate total amount
   const totalAmount = receiptData.transactions.reduce(
     (acc, transaction) => acc + parseFloat((transaction.debit || 0).toString()),
     0
@@ -95,14 +74,10 @@ const ReceiptModal: React.FC<ReceiptModalProps> = ({
         className="shadow-md p-2 mx-auto w-[80mm] bg-white"
       >
         <div id="top" className="border-b border-gray-200 min-h-[100px]">
-          <div
-            className="logo h-[60px] w-[60px] bg-no-repeat bg-contain mx-auto"
-            style={{
-              backgroundImage: `url('${mediaUrl}')`,
-            }}
-          ></div>
           <div className="info text-center">
-            <h2 className="text-lg font-bold">Microfinex Pro</h2>
+            <div className="flex justify-center items-center">
+              <Logo size="xl" disableText />
+            </div>
             <p className="text-sm font-medium">
               <strong>Client:</strong> {receiptData.client_full_name}
             </p>
