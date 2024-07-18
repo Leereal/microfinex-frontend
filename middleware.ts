@@ -103,6 +103,10 @@ const paths = [
   },
   {
     path: "/loans",
-    permission: ["add_loan", "view_loan","change_loan", "delete_loan"],
+    permission: ["add_loan", "view_loan", "change_loan", "delete_loan"],
+  },
+  {
+    path: "/charges",
+    permission: ["add_charge", "view_charge", "change_charge", "delete_charge"],
   },
 ];

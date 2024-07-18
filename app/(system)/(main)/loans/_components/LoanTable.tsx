@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { Tag } from "primereact/tag";
 import { Button } from "primereact/button";
 import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
 import { formatCurrency, formatDate } from "@/utils/helpers";
@@ -15,6 +14,8 @@ import { Menu } from "primereact/menu";
 import { MenuItem } from "primereact/menuitem";
 import { useRouter } from "next/navigation";
 import RefreshButton from "@/components/RefreshButton";
+import LoanStatusTemplate from "@/components/LoanStatusTemplate";
+import TransactionStatusTemplate from "@/components/TransactionStatusTemplate";
 
 interface Props {
   showError: any;
@@ -95,69 +96,10 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
   const collapseAll = () => {
     setExpandedRows({});
   };
-  const getTransactionSeverity = (transactionStatus: string) => {
-    switch (transactionStatus) {
-      case "pending":
-        return "warning";
-      case "approved":
-        return "success";
-      case "cancelled":
-        return "danger";
-      case "refunded":
-        return "success";
-      case "review":
-        return "info"; // Assuming you want "review" as info
-      default:
-        return null;
-    }
-  };
-
-  const getLoanSeverity = (loan: LoanType) => {
-    switch (loan.status) {
-      case "pending":
-        return "warning";
-      case "approved":
-        return "success";
-      case "Rejected":
-        return "danger";
-      case "Active":
-        return "success";
-      case "Default":
-        return "danger";
-      case "Completed":
-        return "info";
-      case "Overdue":
-        return "danger";
-      case "Cancelled":
-        return "danger";
-      case "Failed":
-        return "danger";
-      case "Closed":
-        return "info";
-      case "Legal":
-        return "danger";
-      case "Bad Debt":
-        return "danger";
-      default:
-        return null;
-    }
-  };
 
   const allowExpansion = (rowData: LoanType) => {
     return rowData.transactions.length > 0;
   };
-
-  const statusBodyTemplate = (rowData: LoanType) => (
-    <Tag value={rowData.status} severity={getLoanSeverity(rowData)} />
-  );
-
-  const transactionStatusBodyTemplate = (rowData: TransactionType) => (
-    <Tag
-      value={rowData.status}
-      severity={getTransactionSeverity(rowData.status)}
-      className="capitalize"
-    />
-  );
 
   const amountBodyTemplate = (rowData: any, options: any) => {
     const currency =
@@ -211,7 +153,9 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
         <Column
           field="status"
           header="Status"
-          body={transactionStatusBodyTemplate}
+          body={(rowData) => (
+            <TransactionStatusTemplate status={rowData.status} />
+          )}
           sortable
         />
       </DataTable>
@@ -282,7 +226,9 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
               col.field === "amount" || col.field === "balance"
                 ? amountBodyTemplate
                 : col.field === "status"
-                ? statusBodyTemplate
+                ? (rowData: any) => (
+                    <LoanStatusTemplate status={rowData[col.field]} />
+                  )
                 : col.field === "disbursement_date" ||
                   col.field === "start_date" ||
                   col.field === "expected_repayment_date"

@@ -1,45 +1,48 @@
+// FormTextarea.tsx
 import React from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { classNames } from "primereact/utils";
 import { InputTextarea } from "primereact/inputtextarea";
+import { Controller, useFormContext } from "react-hook-form";
 
-type FormTextAreaProps = {
-  label?: string;
+type FormTextareaProps = {
+  label: string;
   id: string;
+  placeholder: string;
   error?: any;
   className?: string;
-  rows?: number;
-  cols?: number;
 };
 
-const FormTextArea: React.FC<FormTextAreaProps> = ({
+const FormTextarea: React.FC<FormTextareaProps> = ({
   label,
   id,
+  placeholder,
   error,
   className,
-  rows = 5,
-  cols = 30,
 }) => {
   const { control } = useFormContext();
 
   return (
     <div className="field">
-      {label && <label htmlFor={id}>{label}</label>}
+      <label htmlFor={id}>{label}</label>
       <Controller
         name={id}
         control={control}
         render={({ field }) => (
           <InputTextarea
+            autoResize
             id={id}
-            {...field}
-            rows={rows}
-            cols={cols}
-            className={className}
+            value={field.value}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+              field.onChange(e.target.value)
+            }
+            placeholder={placeholder}
+            className={classNames({ "p-invalid": !!error }, className)}
           />
         )}
       />
-      {error && <small className="p-error">{error.message}</small>}
+      {error && <small className="p-error">{error?.message}</small>}
     </div>
   );
 };
 
-export default FormTextArea;
+export default FormTextarea;

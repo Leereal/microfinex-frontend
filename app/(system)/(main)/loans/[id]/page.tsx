@@ -13,7 +13,7 @@ import { useGetCurrenciesQuery } from "@/redux/features/currencyApiSlice";
 import { CurrencyType } from "@/schemas/currency.schema";
 import { formatCurrency, formatDate, formatDateTime } from "@/utils/helpers";
 import { Tag } from "primereact/tag";
-import { TransactionType } from "@/types/common";
+import LoanStatusTemplate from "@/components/LoanStatusTemplate";
 
 const LoanStatement = () => {
   const params = useParams<{ id: string }>();
@@ -24,8 +24,6 @@ const LoanStatement = () => {
     useGetCurrenciesQuery();
   const { data: branches, isLoading: isBranchesLoading } =
     useGetBranchesQuery();
-
-  console.log(" Loan : ", loan);
 
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -71,27 +69,7 @@ const LoanStatement = () => {
         heightLeft -= pageHeight;
       }
 
-      pdf.save("loan_statement.pdf");
-    }
-  };
-
-  const getLoanSeverity = (status: string) => {
-    switch (status) {
-      case "Pending":
-      case "Overdue":
-      case "Default":
-      case "Cancelled":
-      case "Failed":
-      case "Legal":
-      case "Bad Debt":
-        return "danger";
-      case "Approved":
-      case "Active":
-      case "Completed":
-      case "Closed":
-        return "success";
-      default:
-        return null;
+      pdf.save(`${loan?.client_full_name.trim()}_loan_statement.pdf`);
     }
   };
 
@@ -111,10 +89,6 @@ const LoanStatement = () => {
         return null;
     }
   };
-
-  const statusTemplate = (status: string) => (
-    <Tag value={status} severity={getLoanSeverity(status)} />
-  );
 
   const transactionStatusBodyTemplate = (status: string) => (
     <Tag
@@ -261,7 +235,12 @@ const LoanStatement = () => {
                     </div>
                     <div className="flex justify-between">
                       <span>Loan status</span>
-                      <span>{statusTemplate(loan?.status ?? "")}</span>
+                      <span>
+                        <LoanStatusTemplate
+                          status={loan?.status ?? ""}
+                          id={loan?.status ?? ""}
+                        />
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Loan Product</span>

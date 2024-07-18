@@ -97,6 +97,17 @@ const AppMenu = () => {
           to: "/settings/audit-change",
           permission: [],
         },
+        {
+          label: "Charges",
+          icon: "pi pi-fw pi-dollar",
+          to: "/charges",
+          permission: [
+            "view_charge",
+            "add_charge",
+            "change_charge",
+            "delete_charge",
+          ],
+        },
       ],
       permission: [],
     },
