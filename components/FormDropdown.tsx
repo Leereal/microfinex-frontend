@@ -4,7 +4,7 @@ import { Dropdown } from "primereact/dropdown";
 import { Controller, useFormContext } from "react-hook-form";
 
 type FormDropdownProps = {
-  label: string;
+  label?: string;
   id: string;
   options: any[];
   placeholder?: string;
@@ -24,12 +24,12 @@ const FormDropdown: React.FC<FormDropdownProps> = ({
   error,
   showClear,
   defaultValue, // Receive defaultValue from props
-  className
+  className,
 }) => {
   const { setValue } = useFormContext(); // Access setValue function from useFormContext
   return (
     <div className="field">
-      <label htmlFor={id}>{label}</label>
+      {label && <label htmlFor={id}>{label}</label>}
       <Controller
         name={id}
         control={register.control} // Assuming register is passed from useForm or FormProvider

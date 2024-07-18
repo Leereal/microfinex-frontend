@@ -21,6 +21,8 @@ import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import { FilterMatchMode } from "primereact/api";
 import PaymentReceipt from "@/components/templates/payment-receipt";
+import LoanStatusTemplate from "@/components/LoanStatusTemplate";
+import TransactionStatusTemplate from "@/components/TransactionStatusTemplate";
 
 const defaultFilters: DataTableFilterMeta = {
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -302,7 +304,9 @@ const RepaymentTable: React.FC<{ showError: any }> = ({ showError }) => {
         <Column
           field="status"
           header="Status"
-          body={statusBodyTemplate}
+          body={(rowData) => (
+            <TransactionStatusTemplate status={rowData.status} />
+          )}
           sortable
         />
         <Column

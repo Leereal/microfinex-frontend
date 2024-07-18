@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { Tag } from "primereact/tag";
 import { Button } from "primereact/button";
 import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
-import { formatCurrency, formatDate } from "@/utils/helpers";
-import { LoanType, TransactionType } from "@/types/common";
-import { CurrencyType } from "@/schemas/currency.schema";
+import { formatDate } from "@/utils/helpers";
+import { LoanType } from "@/types/common";
 import { useGetCurrenciesQuery } from "@/redux/features/currencyApiSlice";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { useGetLoansQuery } from "@/redux/features/loanApiSlice";
@@ -15,6 +13,9 @@ import { Menu } from "primereact/menu";
 import { MenuItem } from "primereact/menuitem";
 import { useRouter } from "next/navigation";
 import RefreshButton from "@/components/RefreshButton";
+import LoanStatusTemplate from "@/components/LoanStatusTemplate";
+import TransactionStatusTemplate from "@/components/TransactionStatusTemplate";
+import AmountTemplate from "@/components/AmountTemplate"; // Import the new AmountTemplate component
 
 interface Props {
   showError: any;
@@ -95,79 +96,9 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
   const collapseAll = () => {
     setExpandedRows({});
   };
-  const getTransactionSeverity = (transactionStatus: string) => {
-    switch (transactionStatus) {
-      case "pending":
-        return "warning";
-      case "approved":
-        return "success";
-      case "cancelled":
-        return "danger";
-      case "refunded":
-        return "success";
-      case "review":
-        return "info"; // Assuming you want "review" as info
-      default:
-        return null;
-    }
-  };
-
-  const getLoanSeverity = (loan: LoanType) => {
-    switch (loan.status) {
-      case "pending":
-        return "warning";
-      case "approved":
-        return "success";
-      case "Rejected":
-        return "danger";
-      case "Active":
-        return "success";
-      case "Default":
-        return "danger";
-      case "Completed":
-        return "info";
-      case "Overdue":
-        return "danger";
-      case "Cancelled":
-        return "danger";
-      case "Failed":
-        return "danger";
-      case "Closed":
-        return "info";
-      case "Legal":
-        return "danger";
-      case "Bad Debt":
-        return "danger";
-      default:
-        return null;
-    }
-  };
 
   const allowExpansion = (rowData: LoanType) => {
     return rowData.transactions.length > 0;
-  };
-
-  const statusBodyTemplate = (rowData: LoanType) => (
-    <Tag value={rowData.status} severity={getLoanSeverity(rowData)} />
-  );
-
-  const transactionStatusBodyTemplate = (rowData: TransactionType) => (
-    <Tag
-      value={rowData.status}
-      severity={getTransactionSeverity(rowData.status)}
-      className="capitalize"
-    />
-  );
-
-  const amountBodyTemplate = (rowData: any, options: any) => {
-    const currency =
-      currencies?.find(
-        (curr: CurrencyType) =>
-          curr.id === rowData.currency || curr.code === rowData.currency
-      ) || null;
-    return rowData[options.field]
-      ? formatCurrency(rowData[options.field], currency)
-      : null;
   };
 
   const menuTemplate = (rowData: LoanType) => {
@@ -199,24 +130,37 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
         <Column
           field="debit"
           header="Debit"
-          body={amountBodyTemplate}
+          body={(rowData) => (
+            <AmountTemplate
+              amount={rowData.debit}
+              currencyId={rowData.currency}
+            />
+          )}
           sortable
         />
         <Column
           field="credit"
           header="Credit"
-          body={amountBodyTemplate}
+          body={(rowData) => (
+            <AmountTemplate
+              amount={rowData.credit}
+              currencyId={rowData.currency}
+            />
+          )}
           sortable
         />
         <Column
           field="status"
           header="Status"
-          body={transactionStatusBodyTemplate}
+          body={(rowData) => (
+            <TransactionStatusTemplate status={rowData.status} />
+          )}
           sortable
         />
       </DataTable>
     </div>
   );
+
   useEffect(() => {
     if (isLoansError) {
       showError("Error fetching loans");
@@ -280,13 +224,20 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
             sortable
             body={
               col.field === "amount" || col.field === "balance"
-                ? amountBodyTemplate
+                ? (rowData) => (
+                    <AmountTemplate
+                      amount={rowData[col.field]}
+                      currencyId={rowData.currency}
+                    />
+                  )
                 : col.field === "status"
-                ? statusBodyTemplate
+                ? (rowData) => (
+                    <LoanStatusTemplate status={rowData[col.field]} />
+                  )
                 : col.field === "disbursement_date" ||
                   col.field === "start_date" ||
                   col.field === "expected_repayment_date"
-                ? (rowData: any) => formatDate(rowData[col.field])
+                ? (rowData) => formatDate(rowData[col.field])
                 : undefined
             }
           />

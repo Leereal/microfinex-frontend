@@ -49,6 +49,7 @@ const RepaymentModal = ({
     control,
     formState: { errors },
     reset,
+    setError,
   } = form;
 
   const searchLoans = (event: any) => {
@@ -80,10 +81,12 @@ const RepaymentModal = ({
       const errorMessage =
         error.message || "Failed to process repayment. Please try again.";
       showError(errorMessage);
-
       if (error.data) {
         Object.keys(error.data).forEach((field) => {
-          // Set field errors if available
+          setError(field as keyof RepaymentType, {
+            type: "manual",
+            message: error.data[field][0],
+          });
         });
       }
     }
