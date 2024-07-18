@@ -100,6 +100,17 @@ const AppMenu = () => {
       ],
       permission: [],
     },
+    {
+      label: "Reports",
+      items: [
+        {
+          label: "Daily Summary",
+          icon: "pi pi-fw pi-chart-line",
+          to: "/reports/daily-summary",
+          permission: [],
+        },
+      ],
+    },
   ];
 
   return (

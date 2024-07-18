@@ -19,6 +19,7 @@ import { GlobalSettingsType } from "@/schemas/global-settings.schemas";
 import { BranchSettingsType } from "@/schemas/branch-settings.schemas";
 import { BranchProductResponseSchema } from "@/schemas/branch-product.schemas";
 import ReceiptModal from "@/components/templates/receipt";
+import { PaymentGatewayType } from "@/types/common";
 
 type LoanModalProps = {
   visible: boolean;
@@ -27,6 +28,7 @@ type LoanModalProps = {
   showError: (errorMessage: string) => void;
   clients: ClientType[];
   currencies: CurrencyType[];
+  payment_gateways: PaymentGatewayType[];
   globalSettings: GlobalSettingsType[];
   branchSettings?: BranchSettingsType;
   branchProducts: any;
@@ -39,6 +41,7 @@ const LoanModal = ({
   showError,
   clients,
   currencies,
+  payment_gateways,
   globalSettings,
   branchSettings,
   branchProducts,
@@ -181,6 +184,20 @@ const LoanModal = ({
                   value: defaultCurrency.id,
                 }
               }
+              showClear
+            />
+            <FormDropdown
+              label="Payment Method"
+              id="payment_gateway"
+              options={payment_gateways
+                .filter((gateway) => gateway.is_disbursement)
+                .map((payment_gateway) => ({
+                  label: payment_gateway.name,
+                  value: payment_gateway.id,
+                }))}
+              placeholder="Select a Payment Method"
+              register={register}
+              error={errors.payment_gateway}
               showClear
             />
             <FormCalendar

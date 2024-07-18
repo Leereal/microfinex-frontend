@@ -1,3 +1,4 @@
+import { DashboardSummary } from "@/types/common";
 import { apiSlice } from "../services/apiSlice";
 
 export const dashboardApiSlice = apiSlice.injectEndpoints({

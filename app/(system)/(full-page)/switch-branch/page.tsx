@@ -11,10 +11,13 @@ import { LayoutContext } from "@/layout/context/layoutcontext";
 import { Dropdown } from "primereact/dropdown";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { useSession } from "next-auth/react";
+import { useGetDashboardQuery } from "@/redux/features/dashboardApiSlice";
+
 const SwitchPage = () => {
   const toast = useRef<Toast | null>(null);
   const router = useRouter();
   const { data: session, update } = useSession();
+  const { refetch } = useGetDashboardQuery();
 
   const [switchBranch, { isLoading }] = useSwitchBranchMutation();
   const [branch, setBranch] = useState<Branch>();
@@ -41,6 +44,7 @@ const SwitchPage = () => {
               active_branch: selectedBranch.id,
             },
           });
+          refetch();
           showSuccess();
           router.push("/dashboard");
         })

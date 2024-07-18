@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "primereact/button";
+import RefreshButton from "@/components/RefreshButton";
 
 interface SummaryItemProps {
   title: string;
@@ -8,7 +9,13 @@ interface SummaryItemProps {
   isPositive?: boolean;
 }
 
-const SummaryReport = ({ dashboard }: { dashboard: any }) => {
+const SummaryReport = ({
+  dashboard,
+  refetch,
+}: {
+  dashboard: any;
+  refetch: () => void;
+}) => {
   const [activeTab, setActiveTab] = useState<"weekly" | "monthly">("weekly");
 
   const toggleTab = (tab: "weekly" | "monthly") => {
@@ -81,11 +88,9 @@ const SummaryReport = ({ dashboard }: { dashboard: any }) => {
                 <div className="text-lg font-medium truncate mr-5">
                   Summary Report
                 </div>
-                <a href="" className="ml-auto flex items-center text-primary">
-                  <span className="font-semibold">
-                    <i className="pi pi-sync mx-3"></i>Refresh
-                  </span>
-                </a>
+                <div className="ml-auto flex">
+                  <RefreshButton onRefresh={refetch} />
+                </div>
               </div>
               <ul className="border border-slate-300 border-dashed rounded-md mx-auto p-2 mt-5 sm:flex space-x-2">
                 <li className="nav-item flex-1">

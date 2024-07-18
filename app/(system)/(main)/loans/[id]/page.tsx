@@ -13,6 +13,7 @@ import { useGetCurrenciesQuery } from "@/redux/features/currencyApiSlice";
 import { CurrencyType } from "@/schemas/currency.schema";
 import { formatCurrency, formatDate, formatDateTime } from "@/utils/helpers";
 import { Tag } from "primereact/tag";
+import { TransactionType } from "@/types/common";
 
 const LoanStatement = () => {
   const params = useParams<{ id: string }>();
@@ -94,8 +95,33 @@ const LoanStatement = () => {
     }
   };
 
+  const getTransactionSeverity = (transactionStatus: string) => {
+    switch (transactionStatus) {
+      case "pending":
+        return "warning";
+      case "approved":
+        return "success";
+      case "cancelled":
+        return "danger";
+      case "refunded":
+        return "success";
+      case "review":
+        return "info";
+      default:
+        return null;
+    }
+  };
+
   const statusTemplate = (status: string) => (
     <Tag value={status} severity={getLoanSeverity(status)} />
+  );
+
+  const transactionStatusBodyTemplate = (status: string) => (
+    <Tag
+      value={status}
+      severity={getTransactionSeverity(status)}
+      className="capitalize"
+    />
   );
   const totalDebit =
     loan?.transactions.reduce(
@@ -119,7 +145,7 @@ const LoanStatement = () => {
         <div className="card">
           <div className="flex justify-between items-center">
             <h3 className="font-bold text-primary-700">
-              Liberty Mutabvuri Loan Statement
+              {loan?.client_full_name} Loan Statement
             </h3>
             <div className="flex space-x-3">
               <Tooltip anchorSelect=".print-button" content="Print" />
@@ -276,7 +302,11 @@ const LoanStatement = () => {
                               {formatDateTime(transaction.created_at)}
                             </td>
                             <td className="py-2 px-4">
-                              {transaction.description}
+                              {transaction.description}{" "}
+                              {transaction.status !== "approved" &&
+                                transactionStatusBodyTemplate(
+                                  transaction?.status ?? ""
+                                )}
                             </td>
                             <td className="py-2 px-4">
                               {transaction.debit
@@ -318,7 +348,9 @@ const LoanStatement = () => {
                       </tr>
                       <tr
                         className={`font-extrabold ${
-                          currentBalance < 0 ? "text-red-500" : "text-green-500"
+                          (loan?.balance ?? 0) <= 0
+                            ? "text-green-500"
+                            : " text-red-500"
                         }`}
                       >
                         <td className="py-2 px-4" colSpan={2}>
@@ -327,7 +359,7 @@ const LoanStatement = () => {
                         </td>
                         <td className="py-2 px-4" colSpan={2}>
                           {currencyFormat(
-                            currentBalance,
+                            -(loan?.balance ?? 0),
                             loan?.transactions[0]?.currency
                           ) || 0}
                         </td>

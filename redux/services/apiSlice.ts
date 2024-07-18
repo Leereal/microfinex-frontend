@@ -72,7 +72,10 @@ export const apiSlice = createApi({
     "GlobalSettings",
     "BranchSettings",
     "GroupProduct",
-    "PaymentGateway"
+    "PaymentGateway",
+    "Transaction",
+    "Finance",
+    "Report",
   ],
   endpoints: (builder) => ({}),
 });

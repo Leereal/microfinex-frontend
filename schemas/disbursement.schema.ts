@@ -15,6 +15,7 @@ export const DisbursementSchema = z.object({
   client: z.number(),
   amount: z.number(),
   currency: z.number(),
+  payment_gateway: z.number(),
   disbursement_date: z.date().nullable().default(new Date()), // Set default to today's date
   start_date: z.date(),
   expected_repayment_date: z.date(),

@@ -1,11 +1,21 @@
-// ErrorMessage.js
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import { Messages } from "primereact/messages";
 
-const ErrorMessage = ({ error }: { error: any }) =>
-  error && (
-    <div>
-      <small className="p-error">{error?.message}</small>
-    </div>
-  );
+interface ErrorComponentProps {
+  message: string;
+}
 
-export default ErrorMessage;
+const ErrorComponent: React.FC<ErrorComponentProps> = ({ message }) => {
+  const msgs = useRef<Messages>(null);
+
+  useEffect(() => {
+    msgs.current?.clear();
+    msgs.current?.show([
+      { sticky: true, severity: "error", summary: "Error", detail: message },
+    ]);
+  }, [message]);
+
+  return <Messages ref={msgs} />;
+};
+
+export default ErrorComponent;
