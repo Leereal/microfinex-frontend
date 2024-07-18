@@ -3,9 +3,8 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
-import { formatCurrency, formatDate } from "@/utils/helpers";
-import { LoanType, TransactionType } from "@/types/common";
-import { CurrencyType } from "@/schemas/currency.schema";
+import { formatDate } from "@/utils/helpers";
+import { LoanType } from "@/types/common";
 import { useGetCurrenciesQuery } from "@/redux/features/currencyApiSlice";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { useGetLoansQuery } from "@/redux/features/loanApiSlice";
@@ -16,6 +15,7 @@ import { useRouter } from "next/navigation";
 import RefreshButton from "@/components/RefreshButton";
 import LoanStatusTemplate from "@/components/LoanStatusTemplate";
 import TransactionStatusTemplate from "@/components/TransactionStatusTemplate";
+import AmountTemplate from "@/components/AmountTemplate"; // Import the new AmountTemplate component
 
 interface Props {
   showError: any;
@@ -101,17 +101,6 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
     return rowData.transactions.length > 0;
   };
 
-  const amountBodyTemplate = (rowData: any, options: any) => {
-    const currency =
-      currencies?.find(
-        (curr: CurrencyType) =>
-          curr.id === rowData.currency || curr.code === rowData.currency
-      ) || null;
-    return rowData[options.field]
-      ? formatCurrency(rowData[options.field], currency)
-      : null;
-  };
-
   const menuTemplate = (rowData: LoanType) => {
     return (
       <div className="text-center">
@@ -141,13 +130,23 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
         <Column
           field="debit"
           header="Debit"
-          body={amountBodyTemplate}
+          body={(rowData) => (
+            <AmountTemplate
+              amount={rowData.debit}
+              currencyId={rowData.currency}
+            />
+          )}
           sortable
         />
         <Column
           field="credit"
           header="Credit"
-          body={amountBodyTemplate}
+          body={(rowData) => (
+            <AmountTemplate
+              amount={rowData.credit}
+              currencyId={rowData.currency}
+            />
+          )}
           sortable
         />
         <Column
@@ -161,6 +160,7 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
       </DataTable>
     </div>
   );
+
   useEffect(() => {
     if (isLoansError) {
       showError("Error fetching loans");
@@ -224,15 +224,20 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
             sortable
             body={
               col.field === "amount" || col.field === "balance"
-                ? amountBodyTemplate
+                ? (rowData) => (
+                    <AmountTemplate
+                      amount={rowData[col.field]}
+                      currencyId={rowData.currency}
+                    />
+                  )
                 : col.field === "status"
-                ? (rowData: any) => (
+                ? (rowData) => (
                     <LoanStatusTemplate status={rowData[col.field]} />
                   )
                 : col.field === "disbursement_date" ||
                   col.field === "start_date" ||
                   col.field === "expected_repayment_date"
-                ? (rowData: any) => formatDate(rowData[col.field])
+                ? (rowData) => formatDate(rowData[col.field])
                 : undefined
             }
           />

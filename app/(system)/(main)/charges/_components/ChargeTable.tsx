@@ -11,6 +11,7 @@ import { ChargeType } from "@/schemas/charge.schema";
 import CustomTooltip from "@/components/CustomTooltip";
 import chargeModeTemplate from "./ChargeModeTemplate";
 import LoanStatusTemplate from "@/components/LoanStatusTemplate";
+import AmountTemplate from "@/components/AmountTemplate";
 
 const ChargeTable = () => {
   const { data: charges, isLoading, isError } = useGetChargesQuery();
@@ -81,7 +82,17 @@ const ChargeTable = () => {
           sortable
           body={descriptionBodyTemplate}
         />
-        <Column field="amount" header="Amount" sortable />
+        <Column
+          field="amount"
+          header="Amount"
+          body={(rowData) => (
+            <AmountTemplate
+              amount={rowData.amount}
+              currencyId={rowData.currency}
+            />
+          )}
+          sortable
+        />
         <Column
           field="amount_type"
           header="Amount Type"
