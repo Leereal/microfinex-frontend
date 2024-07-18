@@ -3,21 +3,37 @@ import { Toolbar } from "primereact/toolbar";
 import { Button } from "primereact/button";
 import LoanTable from "./LoanTable";
 import { PermissionCheck } from "@/components/auth/PermissionCheck";
+import { useGetLoansQuery } from "@/redux/features/loanApiSlice";
+import { Tooltip } from "react-tooltip";
 
 const LoanList = ({
   onCreate,
   showError,
+  waiting,
 }: {
   onCreate: () => void;
   showError: any;
+  waiting: boolean;
 }) => {
+  const { refetch } = useGetLoansQuery();
   const toolbarLeftTemplate = () => (
-    <Button
-      label="Disburse Loan"
-      icon="pi pi-shopping-cart"
-      style={{ marginRight: ".5em" }}
-      onClick={onCreate}
-    />
+    <div className="flex justify-between items-center">
+      <Tooltip
+        anchorSelect=".disburseButton"
+        content="Wait still loading data"
+      />
+      <Button
+        label="Disburse Loan"
+        icon={`disburseButton pi ${
+          waiting
+            ? " pi-exclamation-triangle text-red-500"
+            : " pi-shopping-cart "
+        }`}
+        style={{ marginRight: ".5em" }}
+        onClick={onCreate}
+        disabled={waiting}
+      />
+    </div>
   );
 
   return (

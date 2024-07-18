@@ -5,7 +5,7 @@ import { Tag } from "primereact/tag";
 import { Button } from "primereact/button";
 import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
 import { formatCurrency, formatDate } from "@/utils/helpers";
-import { LoanType } from "@/types/common";
+import { LoanType, TransactionType } from "@/types/common";
 import { CurrencyType } from "@/schemas/currency.schema";
 import { useGetCurrenciesQuery } from "@/redux/features/currencyApiSlice";
 import { ProgressSpinner } from "primereact/progressspinner";
@@ -14,6 +14,7 @@ import ReceiptModal from "@/components/templates/receipt";
 import { Menu } from "primereact/menu";
 import { MenuItem } from "primereact/menuitem";
 import { useRouter } from "next/navigation";
+import RefreshButton from "@/components/RefreshButton";
 
 interface Props {
   showError: any;
@@ -21,7 +22,12 @@ interface Props {
 
 const LoanTable: React.FC<Props> = ({ showError }: Props) => {
   const [expandedRows, setExpandedRows] = useState<any>({});
-  const { data: loans, isError: isLoansError, isLoading } = useGetLoansQuery();
+  const {
+    data: loans,
+    isError: isLoansError,
+    isLoading,
+    refetch,
+  } = useGetLoansQuery();
   const [isReceiptModalVisible, setIsReceiptModalVisible] = useState(false);
   const [receiptData, setReceiptData] = useState<any>(null);
   const menuRef = useRef<Menu>(null);
@@ -89,11 +95,28 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
   const collapseAll = () => {
     setExpandedRows({});
   };
+  const getTransactionSeverity = (transactionStatus: string) => {
+    switch (transactionStatus) {
+      case "pending":
+        return "warning";
+      case "approved":
+        return "success";
+      case "cancelled":
+        return "danger";
+      case "refunded":
+        return "success";
+      case "review":
+        return "info"; // Assuming you want "review" as info
+      default:
+        return null;
+    }
+  };
+
   const getLoanSeverity = (loan: LoanType) => {
     switch (loan.status) {
-      case "Pending":
+      case "pending":
         return "warning";
-      case "Approved":
+      case "approved":
         return "success";
       case "Rejected":
         return "danger";
@@ -119,12 +142,21 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
         return null;
     }
   };
+
   const allowExpansion = (rowData: LoanType) => {
     return rowData.transactions.length > 0;
   };
 
   const statusBodyTemplate = (rowData: LoanType) => (
     <Tag value={rowData.status} severity={getLoanSeverity(rowData)} />
+  );
+
+  const transactionStatusBodyTemplate = (rowData: TransactionType) => (
+    <Tag
+      value={rowData.status}
+      severity={getTransactionSeverity(rowData.status)}
+      className="capitalize"
+    />
   );
 
   const amountBodyTemplate = (rowData: any, options: any) => {
@@ -176,11 +208,10 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
           body={amountBodyTemplate}
           sortable
         />
-        <Column field="currency" header="Currency" sortable />
         <Column
           field="status"
           header="Status"
-          body={statusBodyTemplate}
+          body={transactionStatusBodyTemplate}
           sortable
         />
       </DataTable>
@@ -222,7 +253,7 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
               className="w-full sm:w-20rem mb-3"
               display="chip"
             />
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               <Button
                 icon="pi pi-plus"
                 label="Expand All"
@@ -235,6 +266,7 @@ const LoanTable: React.FC<Props> = ({ showError }: Props) => {
                 onClick={collapseAll}
                 text
               />
+              <RefreshButton onRefresh={() => refetch()} label="Refresh" />
             </div>
           </div>
         }

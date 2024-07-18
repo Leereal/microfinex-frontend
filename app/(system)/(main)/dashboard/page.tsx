@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { useGetCurrenciesQuery } from "@/redux/features/currencyApiSlice";
 import { formatCurrency, formatDateTime } from "@/utils/helpers";
 import { CurrencyType } from "@/schemas/currency.schema";
+import ErrorComponent from "@/components/ErrorMessage";
 
 const lineData: ChartData = {
   labels: ["January", "February", "March", "April", "May", "June", "July"],
@@ -58,7 +59,12 @@ const Dashboard = () => {
   const menu2 = useRef<Menu>(null);
   const [lineOptions, setLineOptions] = useState<ChartOptions>({});
   const { layoutConfig } = useContext(LayoutContext);
-  const { data: dashboard, isError, isLoading } = useGetDashboardQuery();
+  const {
+    data: dashboard,
+    isError,
+    isLoading,
+    refetch,
+  } = useGetDashboardQuery();
   const router = useRouter();
 
   const { data: currencies, isLoading: isCurrencyLoading } =
@@ -228,7 +234,7 @@ const Dashboard = () => {
   }
 
   if (isError) {
-    return <div>Error loading dashboard data</div>;
+    return <ErrorComponent message="Error loading dashboard data" />;
   }
 
   if (!dashboard) {
@@ -310,7 +316,7 @@ const Dashboard = () => {
           </DataTable>
         </div>
       </div>
-      <SummaryReport dashboard={dashboard} />
+      <SummaryReport dashboard={dashboard} refetch={refetch} />
     </div>
   );
 };
