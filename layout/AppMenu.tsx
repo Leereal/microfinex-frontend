@@ -48,6 +48,21 @@ const AppMenu = () => {
       ],
     },
     {
+      label: "Loans",
+      items: [
+        {
+          label: "View Loans",
+          icon: "pi pi-fw pi-wallet",
+          to: "/loans",
+        },
+        {
+          label: "Registers",
+          icon: "pi pi-fw pi-book",
+          to: "/loans/registers",
+        },
+      ],
+    },
+    {
       label: "Users",
       items: [
         {
@@ -118,6 +133,12 @@ const AppMenu = () => {
           label: "Daily Summary",
           icon: "pi pi-fw pi-chart-line",
           to: "/reports/daily-summary",
+          permission: [],
+        },
+        {
+          label: "Monthly Branches Report",
+          icon: "pi pi-fw pi-chart-line",
+          to: "/reports/monthly-branches",
           permission: [],
         },
       ],

@@ -19,6 +19,12 @@ const reportsApiSlice = apiSlice.injectEndpoints({
       transformResponse: (response: any) => response,
       providesTags: ["Report"],
     }),
+
+    getMonthlyBranchReport: builder.query<any, { month: string }>({
+      query: ({ month }) => `/reports/monthly-branch-report/?month=${month}`,
+      transformResponse: (response: any) => response,
+      providesTags: ["Report"],
+    }),
   }),
 });
 
@@ -26,4 +32,5 @@ export const {
   useGetDailySummaryQuery,
   useGetMonthlySummaryQuery,
   useGetYearlySummaryQuery,
+  useGetMonthlyBranchReportQuery,
 } = reportsApiSlice;

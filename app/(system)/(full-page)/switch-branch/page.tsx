@@ -91,9 +91,10 @@ const SwitchPage = () => {
       <Toast ref={toast} />
       <div className="flex flex-column align-items-center justify-content-center">
         <img
-          src={`/logo-${
-            layoutConfig.colorScheme === "light" ? "dark" : "white"
-          }.png`}
+          // src={`/logo-${
+          //   layoutConfig.colorScheme === "light" ? "dark" : "white"
+          // }.png`}
+          src="/onaroll_logo.png"
           alt="Microfinex logo"
           className="mb-5 w-9rem flex-shrink-0"
         />

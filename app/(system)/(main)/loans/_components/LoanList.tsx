@@ -11,11 +11,10 @@ const LoanList = ({
   showError,
   waiting,
 }: {
-  onCreate: () => void;
+  onCreate?: () => void;
   showError: any;
   waiting: boolean;
 }) => {
-  const { refetch } = useGetLoansQuery();
   const toolbarLeftTemplate = () => (
     <div className="flex justify-between items-center">
       <Tooltip
@@ -39,9 +38,11 @@ const LoanList = ({
   return (
     <div className="card">
       <h3 className="font-bold text-primary-700">Loans List</h3>
-      <PermissionCheck allowedPermissions={["add_loan"]}>
-        <Toolbar start={toolbarLeftTemplate} />
-      </PermissionCheck>
+      {onCreate && (
+        <PermissionCheck allowedPermissions={["add_loan"]}>
+          <Toolbar start={toolbarLeftTemplate} />
+        </PermissionCheck>
+      )}
       <LoanTable showError={showError} />
     </div>
   );
