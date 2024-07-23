@@ -63,6 +63,26 @@ const AppMenu = () => {
       ],
     },
     {
+      label: "Loan Transactions",
+      items: [
+        {
+          label: "View Loan Transactions",
+          icon: "pi pi-fw pi-wallet",
+          to: "/loan-transactions",
+        },
+        {
+          label: "Charges",
+          icon: "pi pi-fw pi-book",
+          to: "/loan-transactions/charges",
+        },
+        {
+          label: "Rebates",
+          icon: "pi pi-fw pi-book",
+          to: "/loan-transactions/rebates",
+        },
+      ],
+    },
+    {
       label: "Users",
       items: [
         {

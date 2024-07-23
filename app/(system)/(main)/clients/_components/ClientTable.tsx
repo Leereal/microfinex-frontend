@@ -23,6 +23,8 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { formatDate } from "@/utils/helpers";
 import { ContextMenu } from "primereact/contextmenu";
+import { useRouter } from "next/navigation";
+import AmountTemplate from "@/components/AmountTemplate";
 
 const defaultFilters: DataTableFilterMeta = {
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -41,6 +43,7 @@ const ClientTable = ({ onEdit }: { onEdit: (client: ClientType) => void }) => {
   const msgs = useRef<Messages>(null);
   const dt = useRef<DataTable<ClientType[]> | null>(null);
   const cm = useRef<ContextMenu>(null);
+  const router = useRouter();
 
   const menuModel = [
     {
@@ -55,7 +58,7 @@ const ClientTable = ({ onEdit }: { onEdit: (client: ClientType) => void }) => {
 
   const defaultColumns = [
     { field: "full_name", header: "Name" },
-    { field: "email", header: "Email" },
+    // { field: "email", header: "Email" },
     { field: "phone", header: "Phone" },
     { field: "date_of_birth", header: "Date of Birth" },
     { field: "national_id", header: "National ID" },
@@ -76,7 +79,7 @@ const ClientTable = ({ onEdit }: { onEdit: (client: ClientType) => void }) => {
     { field: "employer.job_title", header: "Job Title" },
     { field: "employer.employment_date", header: "Employment Date" },
     { field: "client_limit.credit_score", header: "Credit Score" },
-    { field: "client_limit.currency", header: "Currency" },
+    { field: "client_limit.currency_name", header: "Currency" },
     { field: "created_at", header: "Created At" },
     { field: "last_modified", header: "Last Modified" },
     { field: "age", header: "Age" },
@@ -111,11 +114,18 @@ const ClientTable = ({ onEdit }: { onEdit: (client: ClientType) => void }) => {
   };
   const actionBodyTemplate = (rowData: ClientType) => {
     return (
-      <Button
-        icon="pi pi-pencil"
-        className="p-button-rounded p-button-success mr-2"
-        onClick={() => onEdit(rowData)}
-      />
+      <>
+        <Button
+          icon="pi pi-pencil"
+          className="p-button-rounded p-button-success mr-2"
+          onClick={() => onEdit(rowData)}
+        />
+        <Button
+          icon="pi pi-eye"
+          onClick={() => router.push(`/clients/${rowData.id}`)}
+          className="p-button-rounded p-button-success mr-2"
+        />
+      </>
     );
   };
   const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -299,6 +309,24 @@ const ClientTable = ({ onEdit }: { onEdit: (client: ClientType) => void }) => {
               header={col.header}
               body={(rowData) => {
                 return formatDate(rowData[col.field]);
+              }}
+              sortable
+            />
+          );
+        case "client_limit.max_loan":
+          console.log(col.field);
+          return (
+            <Column
+              key={col.field}
+              field={col.field}
+              header={col.header}
+              body={(rowData) => {
+                return (
+                  <AmountTemplate
+                    amount={rowData.client_limit.max_loan}
+                    currencyId={rowData.client_limit.currency}
+                  />
+                );
               }}
               sortable
             />
