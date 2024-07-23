@@ -1,9 +1,11 @@
 import { z } from "zod";
 import { getDefaultsForSchema } from "zod-defaults";
 
+// Define enums
 export const TitleEnum = z.enum(["Dr", "Miss", "Mr", "Mrs", "Ms", "Prof"]);
 export const GenderEnum = z.enum(["Male", "Female", "Other"]);
 
+// Define schemas
 export const ContactSchema = z.object({
   id: z.number().optional().nullable().default(null),
   phone: z.string(),
@@ -11,79 +13,102 @@ export const ContactSchema = z.object({
   is_primary: z.boolean(),
   whatsapp: z.boolean(),
   is_active: z.boolean(),
+  country_code: z.string().nullable().default(null),
 });
 
-export const NextOfKinSchema = z.object({
-  id: z.number().optional().nullable().default(null),
-  first_name: z.string(),
-  last_name: z.string(),
-  email: z.string().nullable().default(null),
-  phone: z.string().nullable().default(null),
-  relationship: z.string().nullable().default(null),
-  address: z.string().nullable().default(null),
-  created_by: z.number().nullable().default(null),
-  is_active: z.boolean(),
-}).nullable().default({
-  id: null,
-  first_name: "",
-  last_name: "",
-  email: null,
-  phone: null,
-  relationship: null,
-  address: null,
-  created_by: null,
-  is_active: true,
-});
+export const NextOfKinSchema = z
+  .object({
+    id: z.number().optional().nullable().default(null),
+    first_name: z.string(),
+    last_name: z.string(),
+    email: z.string().nullable().default(null),
+    phone: z.string().nullable().default(null),
+    relationship: z.string().nullable().default(null),
+    address: z.string().nullable().default(null),
+    created_by: z.number().nullable().default(null),
+    is_active: z.boolean(),
+  })
+  .nullable()
+  .default({
+    id: null,
+    first_name: "",
+    last_name: "",
+    email: null,
+    phone: null,
+    relationship: null,
+    address: null,
+    created_by: null,
+    is_active: true,
+  });
 
-export const EmployerSchema = z.object({
-  id: z.number().optional().nullable().default(null),
-  contact_person: z.string(),
-  email: z.string(),
-  phone: z.string(),
-  name: z.string(),
-  address: z.string(),
-  employment_date: z.string().nullable().default(null),
-  job_title: z.string().nullable().default(null),
-  created_by: z.number().nullable().default(null),
-  is_active: z.boolean(),
-}).nullable().default({
-  id: null,
-  contact_person: "",
-  email: "",
-  phone: "",
-  name: "",
-  address: "",
-  employment_date: null,
-  job_title: null,
-  created_by: null,
-  is_active: true,
-});
+export const EmployerSchema = z
+  .object({
+    id: z.number().optional().nullable().default(null),
+    contact_person: z.string(),
+    email: z.string(),
+    phone: z.string(),
+    name: z.string(),
+    address: z.string(),
+    employment_date: z.string().nullable().default(null),
+    job_title: z.string().nullable().default(null),
+    created_by: z.number().nullable().default(null),
+    is_active: z.boolean(),
+  })
+  .nullable()
+  .default({
+    id: null,
+    contact_person: "",
+    email: "",
+    phone: "",
+    name: "",
+    address: "",
+    employment_date: null,
+    job_title: null,
+    created_by: null,
+    is_active: true,
+  });
 
-export const ClientLimitSchema = z.object({
+// Base schema for client limit
+const BaseClientLimitSchema = z.object({
   id: z.number().optional().nullable().default(null),
   max_loan: z.number().nullable().default(null),
   credit_score: z.string(),
   currency: z.number(),
-}).default({
+});
+
+// Write schema for client limit
+export const CreateClientLimitSchema = BaseClientLimitSchema.default({
   id: null,
   max_loan: null,
   credit_score: "",
   currency: 0,
 });
 
-export const ClientSchema = z.object({
-  id: z.number().optional().nullable().default(null),
+// Read schema for client limit
+export const ClientLimitSchema = BaseClientLimitSchema.extend({
+  currency_name: z.string().nullable().default(null),
+}).default({
+  id: null,
+  max_loan: null,
+  credit_score: "",
+  currency: 0,
+  currency_name: null,
+});
+
+// Base schema for client
+const BaseClientSchema = z.object({
   contacts: z.array(ContactSchema).default([
     {
-      id: undefined,
+      id: null,
       phone: "",
       type: "Cellphone",
       is_active: true,
       is_primary: false,
       whatsapp: false,
-    }
+      country_code: null,
+    },
   ]),
-  country: z.string().nullable().default("Zimbabwe"), //TODO change the field for this
+  country: z.string().nullable().default("Zimbabwe"),
   passport_country: z.string().nullable().default(null),
   next_of_kin: NextOfKinSchema,
   employer: EmployerSchema,
@@ -92,10 +117,8 @@ export const ClientSchema = z.object({
     max_loan: null,
     credit_score: "",
     currency: 0,
+    currency_name: null,
   }),
-  created_at: z.string(),
-  last_modified: z.string(),
-  deleted_at: z.string().nullable().default(null),
   first_name: z.string(),
   last_name: z.string(),
   full_name: z.string().nullable().default(null),
@@ -120,9 +143,26 @@ export const ClientSchema = z.object({
   device_details: z.string().nullable().default(null),
   created_by: z.number().nullable().default(null),
   branch: z.number(),
+});
+
+// Write schema (for creating/updating)
+export const CreateClientSchema = BaseClientSchema.extend({
+  id: z.number().optional().nullable().default(null),
+});
+
+// Read schema (for retrieving)
+export const ClientSchema = BaseClientSchema.extend({
+  id: z.number(),
+  created_at: z.string(),
+  last_modified: z.string(),
+  deleted_at: z.string().nullable().default(null),
   age: z.number(),
 });
 
+// Define types
+export type CreateClientType = z.infer<typeof CreateClientSchema>;
 export type ClientType = z.infer<typeof ClientSchema>;
 
-export const clientDefaultValues = getDefaultsForSchema(ClientSchema);
+// Default values for creating a new client
+export const createClientDefaultValues =
+  getDefaultsForSchema(CreateClientSchema);
