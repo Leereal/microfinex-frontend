@@ -18,7 +18,7 @@ const AmountTemplate: React.FC<AmountTemplateProps> = ({
       (curr: CurrencyType) => curr.id === currencyId || curr.code === currencyId
     ) || null;
 
-  return <span>{formatCurrency(amount, currency)}</span>;
+  return <span>{formatCurrency(amount || 0, currency)}</span>;
 };
 
 export default AmountTemplate;

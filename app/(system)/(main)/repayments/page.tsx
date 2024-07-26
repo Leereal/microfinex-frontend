@@ -6,7 +6,6 @@ import {
   useGetRepaymentsQuery,
 } from "@/redux/features/loanApiSlice"; // Adjust the import as needed
 import RepaymentModal from "./_components/RepaymentModal"; // Create this component
-import { ProgressSpinner } from "primereact/progressspinner";
 import { useGetPaymentGatewaysQuery } from "@/redux/features/paymentGatewayApiSlice";
 import RepaymentList from "./_components/RepaymentList";
 
