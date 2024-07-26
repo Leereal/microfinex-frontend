@@ -15,10 +15,36 @@ import { LoanTransactionType } from "@/schemas/transaction.schema";
 import { useGetTransactionsQuery } from "@/redux/features/transactionApiSlice";
 import AmountTemplate from "@/components/AmountTemplate";
 import TransactionStatusTemplate from "@/components/TransactionStatusTemplate";
+import { Dropdown } from "primereact/dropdown";
+import { Calendar } from "primereact/calendar";
+import { InputNumber } from "primereact/inputnumber";
+import {
+  TransactionTypeEnum,
+  TransactionStatusEnum,
+} from "@/schemas/transaction.schema"; // Ensure these enums are imported
 
 const defaultFilters: DataTableFilterMeta = {
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  // Add individual column filters here if needed
+  created_at: {
+    operator: "and",
+    constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }],
+  },
+  debit: {
+    operator: "and",
+    constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+  },
+  credit: {
+    operator: "and",
+    constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+  },
+  transaction_type: {
+    operator: "and",
+    constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+  },
+  status: {
+    operator: "and",
+    constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+  },
 };
 
 const LoanTransactionTable: React.FC<{ showError: any }> = ({ showError }) => {
@@ -48,8 +74,9 @@ const LoanTransactionTable: React.FC<{ showError: any }> = ({ showError }) => {
     const value = e.target.value;
     let _filters = { ...filters };
 
-    // @ts-ignore
-    _filters["global"].value = value;
+    if ("value" in _filters["global"]) {
+      (_filters["global"] as { value: string }).value = value;
+    }
 
     setFilters(_filters);
     setGlobalFilterValue(value);
@@ -57,6 +84,7 @@ const LoanTransactionTable: React.FC<{ showError: any }> = ({ showError }) => {
 
   const initFilters = () => {
     setGlobalFilterValue("");
+    setFilters(defaultFilters);
   };
 
   const exportColumns = [
@@ -171,9 +199,59 @@ const LoanTransactionTable: React.FC<{ showError: any }> = ({ showError }) => {
       showError("Error fetching transactions");
     }
   }, [isTransactionsError, showError]);
+
   useEffect(() => {
     initFilters();
   }, []);
+
+  const [convertedData, setConvertedData] = useState<any[] | null>(null);
+
+  useEffect(() => {
+    if (transactions) {
+      const convertedTransactions = transactions.map((transaction) => ({
+        ...transaction,
+        created_at: new Date(transaction.created_at), // Ensure created_at is a Date object
+      }));
+      setConvertedData(convertedTransactions);
+    }
+  }, [transactions]);
+
+  const dateFilterTemplate = (options: any) => {
+    return (
+      <Calendar
+        value={options.value}
+        onChange={(e) => options.filterCallback(e.value, options.index)}
+        dateFormat="dd-mm-yy"
+        className="p-column-filter"
+        placeholder="dd/mm/yyyy"
+        mask="99/99/9999"
+      />
+    );
+  };
+
+  const numberFilterTemplate = (options: any) => {
+    return (
+      <InputNumber
+        value={options.value}
+        onValueChange={(e) => options.filterCallback(e.value, options.index)}
+        mode="decimal"
+        className="p-column-filter"
+        placeholder="Filter"
+      />
+    );
+  };
+
+  const dropdownFilterTemplate = (options: any, items: any) => {
+    return (
+      <Dropdown
+        value={options.value}
+        options={items}
+        onChange={(e) => options.filterCallback(e.value, options.index)}
+        placeholder="Select a value"
+        className="p-column-filter"
+      />
+    );
+  };
 
   if (isLoading) {
     return (
@@ -191,7 +269,7 @@ const LoanTransactionTable: React.FC<{ showError: any }> = ({ showError }) => {
   return (
     <>
       <DataTable
-        value={transactions}
+        value={convertedData!}
         dataKey="id"
         header={renderHeader}
         filters={filters}
@@ -209,53 +287,66 @@ const LoanTransactionTable: React.FC<{ showError: any }> = ({ showError }) => {
             return <span>{formatDateTime(rowData.created_at)}</span>;
           }}
           sortable
+          filter
+          dataType="date"
+          filterElement={dateFilterTemplate}
         />
         <Column
           field="client_name"
           header="Client Name"
           sortable
+          filter
           className="capitalize"
         />
         <Column
           field="description"
           header="Description"
           sortable
+          filter
           className="capitalize"
-        />
-        <Column
-          field="credit"
-          header="Credit"
-          sortable
-          body={(rowData) => (
-            <AmountTemplate
-              amount={rowData.credit}
-              currencyId={rowData.currency}
-            />
-          )}
         />
         <Column
           field="debit"
           header="Debit"
-          sortable
           body={(rowData) => (
             <AmountTemplate
               amount={rowData.debit}
               currencyId={rowData.currency}
             />
           )}
+          sortable
+          filter
+          filterElement={numberFilterTemplate}
+        />
+        <Column
+          field="credit"
+          header="Credit"
+          body={(rowData) => (
+            <AmountTemplate
+              amount={rowData.credit}
+              currencyId={rowData.currency}
+            />
+          )}
+          sortable
+          filter
+          filterElement={numberFilterTemplate}
         />
         <Column
           field="transaction_type"
           header="Transaction Type"
           sortable
-          className="capitalize"
+          filter
+          filterElement={(options) =>
+            dropdownFilterTemplate(
+              options,
+              Object.values(TransactionTypeEnum).map((type) => ({
+                label: type,
+                value: type,
+              }))
+            )
+          }
         />
-        <Column
-          field="payment_gateway"
-          header="Payment Method"
-          sortable
-          className="capitalize"
-        />
+        <Column field="payment_gateway" header="Payment Method" sortable />
         <Column
           field="status"
           header="Status"
@@ -263,16 +354,28 @@ const LoanTransactionTable: React.FC<{ showError: any }> = ({ showError }) => {
           body={(rowData) => (
             <TransactionStatusTemplate status={rowData.status} />
           )}
+          filter
+          filterElement={(options) =>
+            dropdownFilterTemplate(
+              options,
+              Object.values(TransactionStatusEnum).map((status) => ({
+                label: status,
+                value: status,
+              }))
+            )
+          }
         />
         <Column
+          header="Actions"
           body={(rowData) => (
-            <div className="flex gap-2">
+            <div className="flex items-center">
               <Button
+                type="button"
                 icon="pi pi-ellipsis-v"
-                className="p-button-rounded p-button-info"
-                onClick={(e) => showMenu(e, rowData)}
+                className="p-button-rounded p-button-secondary p-button-text"
+                onClick={(event) => showMenu(event, rowData)}
               />
-              <Menu model={menuItems} popup ref={menuRef} id="popup_menu" />
+              <Menu model={menuItems} popup ref={menuRef} />
             </div>
           )}
         />

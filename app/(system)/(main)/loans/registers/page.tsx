@@ -117,7 +117,13 @@ const LoansRegister = () => {
 
   useEffect(() => {
     if (loansData) {
-      setLoans(loansData);
+      const convertedLoans = loansData.map((loan) => ({
+        ...loan,
+        disbursement_date: new Date(loan.disbursement_date), // Ensure created_at is a Date object
+        expected_repayment_date: new Date(loan.expected_repayment_date),
+        start_date: new Date(loan.start_date),
+      }));
+      setLoans(convertedLoans);
     }
     initFilters();
   }, [loansData]);
@@ -185,32 +191,13 @@ const LoansRegister = () => {
 
   const header = renderHeader();
 
-  const parseDateString = (dateString: any): Date | null => {
-    if (typeof dateString !== "string") {
-      return null;
-    }
-    const [day, month, year] = dateString.split("/").map(Number);
-    if (isNaN(day) || isNaN(month) || isNaN(year)) {
-      return null;
-    }
-    return new Date(year, month - 1, day);
-  };
-
-  const dateFilterTemplate = (options: ColumnFilterElementTemplateOptions) => {
-    const valueAsDate = options.value ? parseDateString(options.value) : null;
+  const dateFilterTemplate = (options: any) => {
     return (
       <Calendar
-        value={valueAsDate}
-        onChange={(e: any) => {
-          const selectedDate = e.value;
-          const formattedDate = selectedDate
-            ? `${String(selectedDate.getDate()).padStart(2, "0")}/${String(
-                selectedDate.getMonth() + 1
-              ).padStart(2, "0")}/${selectedDate.getFullYear()}`
-            : null;
-          options.filterCallback(formattedDate, options.index);
-        }}
-        dateFormat="dd/mm/yy"
+        value={options.value}
+        onChange={(e) => options.filterCallback(e.value, options.index)}
+        dateFormat="dd-mm-yy"
+        className="p-column-filter"
         placeholder="dd/mm/yyyy"
         mask="99/99/9999"
       />
@@ -284,8 +271,17 @@ const LoansRegister = () => {
                         key={field}
                         field={field}
                         header={header}
+                        dataType={
+                          col.field === "disbursement_date" ||
+                          col.field === "start_date" ||
+                          col.field === "expected_repayment_date"
+                            ? "date"
+                            : ""
+                        }
                         body={
-                          col.field === "amount" || col.field === "balance"
+                          col.field === "amount" ||
+                          col.field === "balance" ||
+                          col.field === "interest_amount"
                             ? (rowData) => (
                                 <AmountTemplate
                                   amount={rowData[col.field]}
